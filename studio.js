@@ -201,6 +201,7 @@ function quiz() {
   };
 }
 function moveQuiz(delta) {
+  quizView().dataset.direction = delta < 0 ? "back" : "next";
   step = Math.min(countQuestions, Math.max(0, step + delta));
   persistQuiz();
   openQuiz();

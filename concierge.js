@@ -352,34 +352,4 @@
   box
     .querySelectorAll("[data-prompt]")
     .forEach((btn) => (btn.onclick = () => send(btn.textContent)));
-  // Reveal each new section as it enters the viewport, including after hash navigation.
-  const motion = matchMedia("(prefers-reduced-motion: reduce)");
-  if ("IntersectionObserver" in window && Element.prototype.animate) {
-    const io = new IntersectionObserver(
-      (entries) =>
-        entries.forEach(({ target, isIntersecting }) => {
-          if (!isIntersecting) return;
-          io.unobserve(target);
-          if (!motion.matches)
-            target.animate(
-              [
-                { opacity: 0.4, transform: "translateY(16px)" },
-                { opacity: 1, transform: "none" },
-              ],
-              { duration: 470, easing: "cubic-bezier(.2,.75,.2,1)" },
-            );
-        }),
-      { threshold: 0.03 },
-    );
-    const watch = () => {
-      io.disconnect();
-      content
-        .querySelectorAll(
-          ":scope > .sectionhead,:scope > .looks,:scope > .promo,:scope > .grid,.hero > div",
-        )
-        .forEach((el) => io.observe(el));
-    };
-    watch();
-    new MutationObserver(watch).observe(content, { childList: true });
-  }
 })();

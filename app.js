@@ -210,7 +210,11 @@ function detail(n) {
 }
 function save() {
   store("cart", JSON.stringify(cart));
-  count.textContent = cart.length;
+  if (count.textContent !== String(cart.length)) {
+    count.textContent = cart.length;
+    if (count.animate && matchMedia('(prefers-reduced-motion: no-preference)').matches)
+      count.animate([{ transform:'scale(.85)' },{ transform:'scale(1.22)',offset:.45 },{ transform:'scale(1)' }],{duration:350});
+  }
 }
 function locate(lat, lon) {
   map.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - 0.03}%2C${lat - 0.02}%2C${lon + 0.03}%2C${lat + 0.02}&layer=mapnik&marker=${lat}%2C${lon}`;
@@ -277,7 +281,11 @@ function render() {
   draw();
   window.scrollTo(0, 0);
 }
-window.onhashchange = render;
+window.onhashchange = () => {
+  render();
+  if (crumb.animate && matchMedia('(prefers-reduced-motion: no-preference)').matches)
+    crumb.animate([{opacity:.3,transform:'translateX(10px)'},{opacity:1,transform:'none'}],{duration:280,easing:'ease-out'});
+};
 save();
 
 const styles = [

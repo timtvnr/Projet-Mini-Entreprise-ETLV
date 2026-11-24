@@ -9,7 +9,7 @@ assets['source-sans.woff2']=uri(Path('assets/source-sans.woff2'),'font/woff2')
 def inline(text):
     return re.sub(r'(?<!/)assets/([\w-]+\.(?:webp|woff2))',lambda m:assets[m[1]],text)
 html=inline(Path('index.html').read_text()).replace('<link rel="stylesheet" href="style.css">','<style>'+inline(Path('style.css').read_text())+'</style>')
-for name in ['icons','app','studio','knowledge','concierge']:
+for name in ['icons','app','studio','knowledge','concierge','motion']:
     js=Path(name+'.js').read_text()
     if name=='app':
         js='const photos='+json.dumps({k:v for k,v in assets.items() if k.endswith('.webp')})+';\n'+re.sub(r'assets/\$\{([^}]+)\}\.webp',r"${photos[\1+'.webp']}",js)
