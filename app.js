@@ -45,6 +45,9 @@ const products = [
   ["Cire modelante", "Cire", "cire", 18, "Modeler une coupe courte", "€€"],
   ["Poudre volume", "Poudre", "poudre", 17, "Donner du volume", "€"],
   ["Shampoing délicat", "Shampoing", "bebe", 12, "Laver les cheveux de bébé", "€"],
+  ["Brume de réveil", "Brume", "brume", 15, "Rafraîchir entre deux lavages", "€"],
+  ["Lait de coiffage", "Lait sans rinçage", "lait", 22, "Préparer les longueurs au coiffage", "€€"],
+  ["Shampoing solide nomade", "Shampoing", "solide", 13, "Laver en déplacement", "€"],
 ]; // Keep the demo usable when browser storage is blocked or contains stale values.
 const memoryData = new Map();
 function load(key) {
@@ -108,7 +111,24 @@ const productNotes = [
     "Un shampoing présenté dans la gamme bébé de démonstration.",
     "Un adulte applique et rince le produit en suivant les indications de la notice.",
   ],
+  ["Une brume légère pour retravailler quelques mèches le matin, sans remouiller toute la chevelure.", "Vaporisez dans les mains, pressez les mèches à remettre en forme puis laissez sécher."],
+  ["Un lait fluide à répartir sur les longueurs humides pour les préparer au coiffage sans passer par une étape de rinçage.", "Étalez une petite quantité entre les paumes, puis répartissez des mi-longueurs vers les pointes avant de coiffer."],
+  ["Un pain lavant compact à glisser dans une boîte pour emporter son geste de lavage en déplacement.", "Faites mousser le pain dans les mains mouillées. Massez les racines avec la mousse, rincez puis laissez sécher le pain hors de sa boîte."],
 ];
+// Formats et textures illustrent les références fictives de la mini-entreprise.
+const careGuides = {
+  masque: ["200 ml", "Crème enveloppante", "Après le shampoing", "Pour garder du volume, réservez le masque aux longueurs plutôt qu’aux racines."],
+  shampoing: ["250 ml", "Gel lavant", "Au lavage", "Mouillez bien la chevelure avant de répartir le shampoing : inutile de frotter les pointes."],
+  huile: ["30 ml", "Huile fluide", "En finition", "Commencez par une seule goutte : il est plus facile d’en ajouter que d’en retirer."],
+  conditioner: ["180 ml", "Crème légère", "Après le shampoing", "Séparez les longueurs en sections et commencez le démêlage par les pointes."],
+  gel: ["150 ml", "Gel souple", "Sur cheveux humides", "Formez les boucles avant le séchage et évitez de les manipuler tant qu’elles sont humides."],
+  cire: ["50 g", "Pâte modelable", "Sur cheveux secs", "Travaillez d’abord les mèches du dessus avec les doigts, plutôt que de charger les racines."],
+  poudre: ["10 g", "Poudre fine", "À la fin du coiffage", "Soulevez une mèche et appliquez localement plutôt que de saupoudrer toute la chevelure."],
+  bebe: ["200 ml", "Gel à rincer", "Pendant le bain", "Gardez le flacon à portée de l’adulte avant le bain et évitez tout contact avec les yeux."],
+  brume: ["100 ml", "Brume aqueuse", "Entre deux lavages", "Ciblez les mèches aplaties après la nuit ; quelques pressions dans les mains suffisent pour commencer."],
+  lait: ["150 ml", "Émulsion fluide", "Avant le coiffage", "Sur cheveux fins, commencez aux pointes et gardez la main légère près des racines."],
+  solide: ["65 g", "Pain solide", "Au lavage", "En voyage, laissez le pain sécher sur un support ajouré avant de refermer sa boîte."]
+};
 // Intrinsic dimensions reserve space before lazy-loaded photos arrive.
 function photoSize(key) {
   const portrait = ["afro", "carre", "poudre", "rideau", "tresses"].includes(
@@ -123,7 +143,7 @@ function cards(arr) {
     arr
       .map((p) => {
         let n = products.indexOf(p);
-        return `<article class="card"><div class="photo"><img loading="lazy" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}" onclick="detail(${n})">${[0, 2].includes(n) ? '<span class="badge">Nouveauté</span>' : ""}<button aria-label="Favori : ${p[0]}" aria-pressed="${fav.includes(n)}" class="fav ${fav.includes(n) ? "on" : ""}" onclick="favorite(${n},this)">${I("heart")}</button></div><div class="info"><span class="eyebrow">${p[1].toUpperCase()}</span><h3><a href="#" onclick="detail(${n});return false">${p[0]}</a></h3><span class="muted">${price(p[3])}</span><button class="add-care" onclick="cart.push(${n});save();bag()">Ajouter au panier</button></div></article>`;
+        return `<article class="card"><div class="photo"><img loading="lazy" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}" onclick="detail(${n})">${n >= 8 ? '<span class="badge">Nouveauté</span>' : ""}<button aria-label="Favori : ${p[0]}" aria-pressed="${fav.includes(n)}" class="fav ${fav.includes(n) ? "on" : ""}" onclick="favorite(${n},this)">${I("heart")}</button></div><div class="info"><span class="eyebrow">${p[1].toUpperCase()}</span><h3><a href="#" onclick="detail(${n});return false">${p[0]}</a></h3><p class="product-purpose">${p[4]}</p><div class="product-meta"><span>${careGuides[p[2]][0]}</span><strong>${price(p[3])}</strong></div><button class="add-care" onclick="cart.push(${n});save();bag()">Ajouter au panier</button></div></article>`;
       })
       .join("") || "<p>Aucun soin ne correspond à ces filtres.</p>"
   );
@@ -191,8 +211,9 @@ function pop(s) {
 }
 function detail(n) {
   let p = products[n];
+  const [format,texture,moment,tip]=careGuides[p[2]];
   pop(
-    `<span class="eyebrow">${p[1]}</span><h2>${p[0]}</h2><img class="detailphoto" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}"><p>${productNotes[n][0]}</p><p><strong>Pour quel usage ?</strong> ${p[4]}.</p><p><strong>Le geste :</strong> ${productNotes[n][1]}</p><b>${price(p[3])}</b><br><button class="cta" onclick="cart.push(${n});save();bag()">Ajouter au panier</button>`,
+    `<span class="eyebrow">${p[1]}</span><h2>${p[0]}</h2><img class="detailphoto" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}"><dl class="care-specs"><div><dt>Format</dt><dd>${format}</dd></div><div><dt>Texture</dt><dd>${texture}</dd></div><div><dt>Dans la routine</dt><dd>${moment}</dd></div></dl><p>${productNotes[n][0]}</p><p><strong>Pour quel usage ?</strong> ${p[4]}.</p><p><strong>Le geste :</strong> ${productNotes[n][1]}</p><div class="care-tip"><strong>Le conseil pratique</strong><p>${tip}</p></div><small class="demo-note">Produit de démonstration · Format illustratif</small><b>${price(p[3])}</b><br><button class="cta" onclick="cart.push(${n});save();bag()">Ajouter au panier</button>`,
   );
 }
 function save() {
