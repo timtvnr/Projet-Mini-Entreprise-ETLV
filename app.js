@@ -1,13 +1,284 @@
-const pages=['Accueil','Boutique','Mon diagnostic','Coiffeurs spécialisés','Photo inspi','Partenaires','Application mobile'],ids=['accueil','boutique','diagnostic','coiffeurs','inspiration','partenaires','application'],ico=['house','store','clipboard-list','map-pin','images','handshake','smartphone'],I=n=>`<i data-i="${n}"></i>`,draw=()=>document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=icons[e.dataset.i]||''),A=(t,id,c='cta')=>`<a class="${c}" href="#${id}">${t} ${I('arrow-right')}</a>`;let cart=JSON.parse(localStorage.cart||'[]'),fav=JSON.parse(localStorage.fav||'[]');const products=[['Masque nutritif','Masque','masque',24,'Cheveux bouclés','€€'],['Shampoing douceur','Shampoing','shampoing',16,'Cheveux lisses','€'],['Huile sublime','Huile','huile',29,'Cheveux colorés','€€€'],['Après-shampoing soyeux','Après-shampoing','shampoing',19,'Senior','€€'],['Gel définition','Gel','masque',14,'Cheveux bouclés','€'],['Cire modelante','Cire','masque',18,'Homme','€€'],['Poudre volume','Poudre','shampoing',17,'Homme','€'],['Shampoing délicat','Shampoing','shampoing',12,'Bébé','€']];const profiles=['Cheveux bouclés','Cheveux lisses','Cheveux colorés','Homme','Bébé','Senior'];function cards(arr){return arr.map(p=>{let n=products.indexOf(p);return `<article class="card"><div class="photo"><img src="assets/${p[2]}.jpg" alt="${p[0]}" onclick="detail(${n})"><span class="badge">${n===1?'Essentiel':'Nouveauté'}</span><button aria-label="Favori" class="fav ${fav.includes(n)?'on':''}" onclick="favorite(${n},this)">${I('heart')}</button></div><div class="info"><span class="eyebrow">${p[1].toUpperCase()}</span><h3><a href="#" onclick="detail(${n});return false">${p[0]}</a></h3><span class="muted">${p[3]},00 €</span></div></article>`}).join('')||'<p>Aucun soin ne correspond à ces filtres.</p>'}function favorite(n,b){fav=fav.includes(n)?fav.filter(i=>i!==n):[...fav,n];localStorage.fav=JSON.stringify(fav);b.classList.toggle('on')}const head=(k,t)=>`<div class="eyebrow">${k}</div><h2>${t}</h2>`,banner=`<div class="promo appbanner"><span class="symbol">${I('smartphone')}</span><div>${head('NEW H’AIR MOBILE','Votre routine à portée de main')}</div>${A('Découvrir l’application','application','link')}</div>`,select=(a,t)=>`<select aria-label="${t}" onchange="filter()"><option value="">${t}</option>${a.map(x=>`<option>${x}</option>`).join('')}</select>`;function home(){return `<div class="cover"><div class="hero"><div><span class="tag">${I('leaf')} L’UNIVERS NEW H’AIR</span><h1>Vos cheveux,<br><em>notre passion.</em></h1><p>Des soins ciblés et des conseils personnalisés<br>pour révéler la beauté de vos cheveux.</p>${A('Explorer la boutique','boutique')}</div></div><article class="ritual"><div class="ritualpic"><span class="tag">ÉDITION BEAUTÉ · N° 01</span></div><div class="ritualtext"><span class="eyebrow">LE GESTE DU JOUR</span><h3>Le bain de douceur</h3><p>Avant le shampoing, séparez vos longueurs en sections pour faciliter le démêlage.</p><a class="link" href="#diagnostic">Composer mon rituel ${I('arrow-right')}</a></div></article></div><div class="promo"><span class="symbol">${I('clipboard-list')}</span><div><span class="eyebrow">DIAGNOSTIC CAPILLAIRE</span><h3>Une routine qui vous ressemble</h3><p>${countQuestions} questions · Environ 4 minutes · Votre carnet de soins personnalisé</p></div>${A('Faire le diagnostic','diagnostic','link')}</div><div class="sectionhead"><div>${head('LA SÉLECTION NEW H’AIR','Les nouveautés')}</div>${A('Voir la boutique','boutique','link')}</div><div class="grid">${cards(products.slice(0,3))}</div><div class="sectionhead editorial"><div>${head('LE CARNET COIFFURE','Inspirations du moment')}</div>${A('Voir la galerie','inspiration','link')}</div><div class="looks">${[['carre','Le carré graphique'],['tresses','Tresses sculptées']].map(([img,title])=>`<a href="#inspiration"><img src="assets/${img}.jpg" alt="${title}"><span>${title} ↗</span></a>`).join('')}</div>${banner}`}
-function filter(){let [t,p,v]=[...document.querySelectorAll('select')].map(x=>x.value);catalog.innerHTML=cards(products.filter(x=>(!t||x[1]===t)&&(!p||x[4]===p)&&(!v||x[5]===v)));draw()}function pop(s){inside.innerHTML=s;if(!modal.open)modal.showModal();draw()}function detail(n){let p=products[n];pop(`<span class="eyebrow">${p[1]}</span><h2>${p[0]}</h2><p>Un soin pour votre profil : ${p[4].toLowerCase()}.</p><b>${p[3]},00 €</b><br><button class="cta" onclick="cart.push(${n});save();bag()">Ajouter au panier</button>`)}function save(){localStorage.cart=JSON.stringify(cart);count.textContent=cart.length}function locate(lat,lon){map.src=`https://www.openstreetmap.org/export/embed.html?bbox=${lon-.03}%2C${lat-.02}%2C${lon+.03}%2C${lat+.02}&layer=mapnik&marker=${lat}%2C${lon}`}
-function render(){let n=Math.max(0,ids.indexOf(location.hash.slice(1)));crumb.textContent=pages[n];nav.innerHTML=pages.map((p,i)=>`<a class="${i===n?'active':''}" href="#${ids[i]}">${I(ico[i])}${p}</a>`).join('');content.innerHTML=[home,()=>head('NOS SOINS','La boutique')+`<div class="filters">${select([...new Set(products.map(x=>x[1]))],'Types de soins')}${select(profiles,'Tous les profils')}${select(['€','€€','€€€'],'Tous les prix')}</div><div class="grid" id="catalog">${cards(products)}</div>`,()=>head('CONSEIL PERSONNALISÉ','Mon diagnostic')+'<div class="panel" id="quiz"></div>',()=>head('AUTOUR DE VOUS','Coiffeurs spécialisés')+`<div class="panel"><iframe title="Carte des environs" id="map"></iframe><button class="cta" onclick="navigator.geolocation.getCurrentPosition(p=>locate(p.coords.latitude,p.coords.longitude),()=>msg.textContent='Localisation indisponible. La carte reste centrée sur Lyon.')">Me localiser</button><p id="msg">Carte centrée sur Lyon. Découvrez les <a href="https://www.google.com/maps/search/coiffeur+spécialisé+cheveux+bouclés+Lyon" target="_blank">salons pour cheveux bouclés à Lyon ↗</a>.</p></div>`,styleGallery,()=>head('COLLABORATIONS','Espace partenaires')+'<div class="panel"><span class="eyebrow">ESPACE PUBLICITAIRE</span><h2>À la rencontre des professionnels</h2><p>Cet espace est réservé aux futures collaborations avec les salons et les marques de soins capillaires.</p></div>',()=>head('FOR YOUR HAIR','L’application New H’air')+'<div class="panel"><span class="eyebrow">BIENTÔT DISPONIBLE</span><h2>Vos soins vous suivent partout.</h2><p>L’application mobile sera prochainement disponible au téléchargement. En attendant, découvrez votre routine sur le site.</p>'+A('Découvrir ma routine','diagnostic')+'</div>'][n]();if(n===2)openQuiz();if(n===3)locate(45.76,4.835);draw();window.scrollTo(0,0)}window.onhashchange=render;save();
-
-const styles=[
- ['Boucles au naturel','hero','Des boucles libres dont on conserve le ressort.','Demandez une forme qui respecte le retrait de vos boucles au séchage.','coiffeur boucles'],
- ['Le carré graphique','carre','Une ligne de coupe nette qui souligne la mâchoire.','Montrez où vous voulez que la ligne du carré arrive une fois sèche.','coupe carré'],
- ['Les tresses sculptées','tresses','Des mèches entrelacées pour dessiner un motif.','Précisez la taille des tresses et demandez une tension confortable.','tresses afro'],
- ['La coupe pixie','pixie','Une coupe courte à la nuque, avec du relief sur le dessus.','Choisissez la longueur que vous voulez garder sur le front et autour des oreilles.','coupe pixie'],
- ['Le dégradé à frange rideau','rideau','Des mèches de différentes longueurs et une frange qui s’ouvre autour du visage.','Indiquez où vous voulez que la mèche la plus courte tombe.','frange rideau dégradé'],
- ['L’afro arrondi','afro','Une silhouette ronde qui met en valeur le volume des cheveux crépus.','Discutez de la hauteur et du volume à conserver sur les côtés.','coupe afro naturelle']
+const pages = [
+    "Notre histoire",
+    "Boutique",
+    "Mon diagnostic",
+    "Coiffeurs spécialisés",
+    "Photo inspi",
+    "Partenaires",
+    "Application mobile",
+  ],
+  ids = [
+    "accueil",
+    "boutique",
+    "diagnostic",
+    "coiffeurs",
+    "inspiration",
+    "partenaires",
+    "application",
+  ],
+  ico = [
+    "house",
+    "store",
+    "clipboard-list",
+    "map-pin",
+    "images",
+    "handshake",
+    "smartphone",
+  ],
+  I = (n) => `<i data-i="${n}"></i>`,
+  draw = () =>
+    document
+      .querySelectorAll("[data-i]")
+      .forEach((e) => (e.innerHTML = icons[e.dataset.i] || "")),
+  A = (t, id, c = "cta") =>
+    `<a class="${c}" href="#${id}">${t} ${I("arrow-right")}</a>`;
+const products = [
+  ["Masque nutritif", "Masque", "masque", 24, "Cheveux bouclés", "€€"],
+  ["Shampoing douceur", "Shampoing", "shampoing", 16, "Cheveux lisses", "€"],
+  ["Huile sublime", "Huile", "huile", 29, "Cheveux colorés", "€€€"],
+  [
+    "Après-shampoing soyeux",
+    "Après-shampoing",
+    "shampoing",
+    19,
+    "Senior",
+    "€€",
+  ],
+  ["Gel définition", "Gel", "masque", 14, "Cheveux bouclés", "€"],
+  ["Cire modelante", "Cire", "masque", 18, "Homme", "€€"],
+  ["Poudre volume", "Poudre", "shampoing", 17, "Homme", "€"],
+  ["Shampoing délicat", "Shampoing", "shampoing", 12, "Bébé", "€"],
+]; // Keep the demo usable when browser storage is blocked or contains stale values.
+const memoryData = new Map();
+function load(key) {
+  if (memoryData.has(key)) return memoryData.get(key);
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+function store(key, value) {
+  memoryData.set(key, value);
+  try {
+    if (value === null) localStorage.removeItem(key);
+    else localStorage.setItem(key, value);
+  } catch {
+    /* session fallback */
+  }
+}
+function list(key, valid) {
+  try {
+    const a = JSON.parse(load(key));
+    return Array.isArray(a) ? a.filter(valid) : [];
+  } catch {
+    return [];
+  }
+}
+const validProduct = (n) => Number.isInteger(n) && !!products[n];
+let cart = list("cart", validProduct),
+  fav = list("fav", validProduct);
+const profiles = [
+  "Cheveux bouclés",
+  "Cheveux lisses",
+  "Cheveux colorés",
+  "Homme",
+  "Bébé",
+  "Senior",
 ];
-function styleGallery(){return head('LE GUIDE DES FORMES','Le carnet des coupes & coiffures')+'<p class="guideintro">Une coupe change la forme des cheveux ; une coiffure change la façon de les porter. Explorez les deux et gardez les bons mots pour votre prochain rendez-vous.</p><div class="grid stylegrid">'+styles.map(([t,img,desc,brief,key])=>`<article class="card"><div class="photo"><img src="assets/${img}.jpg" alt="${t}"></div><div class="info"><span class="eyebrow">${img==='tresses'?'COIFFURE TRESSÉE':'FORME & TEXTURE'}</span><h3>${t}</h3><p>${desc}</p><details><summary>Les mots à dire au salon</summary><p>${brief}</p></details><a class="cta" target="_blank" href="https://www.google.com/maps/search/${encodeURIComponent(key+' Lyon')}">Trouver un spécialiste ↗</a></div></article>`).join('')+'</div><p class="guideintro">Pour aller plus loin : quelle frange selon la forme du visage ? [<a href="https://www.franckprovost-expert.com/le-mag-expert/coiffure/quelle-frange-selon-la-forme-de-mon-visage_a1086">2</a>]</p>'}
+function cards(arr) {
+  return (
+    arr
+      .map((p) => {
+        let n = products.indexOf(p);
+        return `<article class="card"><div class="photo"><img src="assets/${p[2]}.jpg" alt="${p[0]}" onclick="detail(${n})"><span class="badge">${n === 1 ? "Essentiel" : "Nouveauté"}</span><button aria-label="Favori" class="fav ${fav.includes(n) ? "on" : ""}" onclick="favorite(${n},this)">${I("heart")}</button></div><div class="info"><span class="eyebrow">${p[1].toUpperCase()}</span><h3><a href="#" onclick="detail(${n});return false">${p[0]}</a></h3><span class="muted">${p[3]},00 €</span></div></article>`;
+      })
+      .join("") || "<p>Aucun soin ne correspond à ces filtres.</p>"
+  );
+}
+function favorite(n, b) {
+  fav = fav.includes(n) ? fav.filter((i) => i !== n) : [...fav, n];
+  store("fav", JSON.stringify(fav));
+  b.classList.toggle("on");
+}
+const head = (k, t) => `<div class="eyebrow">${k}</div><h2>${t}</h2>`,
+  banner = `<div class="promo appbanner"><span class="symbol">${I("smartphone")}</span><div>${head("NEW H’AIR MOBILE", "Votre routine à portée de main")}</div>${A("Découvrir l’application", "application", "link")}</div>`,
+  select = (a, t) =>
+    `<select aria-label="${t}" onchange="filter()"><option value="">${t}</option>${a.map((x) => `<option>${x}</option>`).join("")}</select>`;
+function home() {
+  return `<section class="origin-cover"><div class="origin-copy"><span class="eyebrow">NEW H’AIR &nbsp; / &nbsp; NOTRE HISTOIRE</span><h1>Quatre prénoms,<br><em>une même idée.</em></h1><p>Et si choisir un soin commençait par comprendre ses cheveux, plutôt que par remplir son panier ? C’est la question qui nous a réunis.</p><div class="byline">Pauline · Cameron · Louise · Timothée</div></div><div class="origin-image"><span>FOR YOUR HAIR &nbsp; / &nbsp; NEW H’AIR</span></div></section>
+<section class="letter"><div>${head("LE MOT DE L’ÉQUIPE", "Pourquoi New H’air ?")}</div><div><p>Entre deux shampoings qui se ressemblent et des conseils qui se contredisent, il n’est pas toujours facile de savoir par où commencer. Nous avons créé cette mini-entreprise pour rendre ce choix plus simple.</p><p>Notre point de départ, ce sont les gestes du quotidien : démêler ses pointes, préserver une boucle ou se coiffer avant de partir. Nous voulons que chacun puisse trouver une routine adaptée à ses cheveux, à son temps et à son budget.</p></div></section>
+<section class="intentions">${head("NOTRE FEUILLE DE ROUTE", "Ce que nous voulons changer")}<div class="grid">${[
+    [
+      "01",
+      "Comprendre avant d’acheter",
+      "Des questions concrètes sur vos habitudes, pour expliquer chaque geste conseillé.",
+      "Découvrir le diagnostic",
+      "diagnostic",
+    ],
+    [
+      "02",
+      "Choisir sans se perdre",
+      "Un catalogue lisible, avec des filtres par soin, par profil et par prix.",
+      "Parcourir les soins",
+      "boutique",
+    ],
+    [
+      "03",
+      "Oser en parler au salon",
+      "Des photos de coupes et les mots pour expliquer à un coiffeur ce que vous imaginez.",
+      "Feuilleter le carnet",
+      "inspiration",
+    ],
+  ]
+    .map(
+      ([n, t, p, l, id]) =>
+        `<article><span class="folio">${n} /</span><h3>${t}</h3><p>${p}</p>${A(l, id, "link")}</article>`,
+    )
+    .join(
+      "",
+    )}</div></section><div class="team-sign"><span class="eyebrow">LES CRÉATEURS DE NEW H’AIR</span><p>Pauline, Cameron, Louise <em>&</em> Timothée</p></div>`;
+}
+function filter() {
+  let [t, p, v] = [...document.querySelectorAll("select")].map((x) => x.value);
+  catalog.innerHTML = cards(
+    products.filter(
+      (x) => (!t || x[1] === t) && (!p || x[4] === p) && (!v || x[5] === v),
+    ),
+  );
+  draw();
+}
+function pop(s) {
+  inside.innerHTML = s;
+  if (!modal.open) modal.showModal();
+  draw();
+}
+function detail(n) {
+  let p = products[n];
+  pop(
+    `<span class="eyebrow">${p[1]}</span><h2>${p[0]}</h2><p>Un soin pour votre profil : ${p[4].toLowerCase()}.</p><b>${p[3]},00 €</b><br><button class="cta" onclick="cart.push(${n});save();bag()">Ajouter au panier</button>`,
+  );
+}
+function save() {
+  store("cart", JSON.stringify(cart));
+  count.textContent = cart.length;
+}
+function locate(lat, lon) {
+  map.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - 0.03}%2C${lat - 0.02}%2C${lon + 0.03}%2C${lat + 0.02}&layer=mapnik&marker=${lat}%2C${lon}`;
+}
+function findPosition() {
+  const note = document.getElementById("msg");
+  const fail = () => {
+    if (note.isConnected)
+      note.textContent =
+        "Localisation indisponible. Vous pouvez déplacer la carte manuellement.";
+  };
+  if (!navigator.geolocation) return fail();
+  navigator.geolocation.getCurrentPosition(
+    (p) => {
+      if (note.isConnected) {
+        locate(p.coords.latitude, p.coords.longitude);
+        note.textContent = "Carte centrée sur votre position.";
+      }
+    },
+    fail,
+    { timeout: 10000 },
+  );
+}
+function render() {
+  let n = Math.max(0, ids.indexOf(location.hash.slice(1)));
+  if (modal.open) modal.close();
+  crumb.textContent = pages[n];
+  document.title = pages[n] + " · New H’air";
+  nav.innerHTML = pages
+    .map(
+      (p, i) =>
+        `<a ${i === n ? 'aria-current="page"' : ""} class="${i === n ? "active" : ""}" href="#${ids[i]}">${I(ico[i])}${p}</a>`,
+    )
+    .join("");
+  content.innerHTML = [
+    home,
+    () =>
+      head("NOS SOINS", "La boutique") +
+      `<div class="filters">${select([...new Set(products.map((x) => x[1]))], "Types de soins")}${select(profiles, "Tous les profils")}${select(["€", "€€", "€€€"], "Tous les prix")}</div><div class="grid" id="catalog">${cards(products)}</div>`,
+    () =>
+      head("CONSEIL PERSONNALISÉ", "Mon diagnostic") +
+      '<div class="panel" id="quiz"></div>',
+    () =>
+      head("AUTOUR DE VOUS", "Coiffeurs spécialisés") +
+      `<div class="panel"><iframe title="Carte des environs" id="map"></iframe><button class="cta" onclick="findPosition()">Me localiser</button><p id="msg">Carte centrée sur Lyon. Découvrez les <a href="https://www.google.com/maps/search/coiffeur+spécialisé+cheveux+bouclés+Lyon" target="_blank">salons pour cheveux bouclés à Lyon ↗</a>.</p></div>`,
+    styleGallery,
+    () =>
+      head("COLLABORATIONS", "Espace partenaires") +
+      '<div class="panel"><span class="eyebrow">ESPACE PUBLICITAIRE</span><h2>À la rencontre des professionnels</h2><p>Cet espace est réservé aux futures collaborations avec les salons et les marques de soins capillaires.</p></div>',
+    () =>
+      head("FOR YOUR HAIR", "L’application New H’air") +
+      '<div class="panel"><span class="eyebrow">BIENTÔT DISPONIBLE</span><h2>Vos soins vous suivent partout.</h2><p>L’application mobile sera prochainement disponible au téléchargement. En attendant, découvrez votre routine sur le site.</p>' +
+      A("Découvrir ma routine", "diagnostic") +
+      "</div>",
+  ][n]();
+  if (n === 2) openQuiz();
+  if (n === 3) locate(45.76, 4.835);
+  draw();
+  window.scrollTo(0, 0);
+}
+window.onhashchange = render;
+save();
+
+const styles = [
+  [
+    "Boucles au naturel",
+    "hero",
+    "Des boucles libres dont on conserve le ressort.",
+    "Demandez une forme qui respecte le retrait de vos boucles au séchage.",
+    "coiffeur boucles",
+  ],
+  [
+    "Le carré graphique",
+    "carre",
+    "Une ligne de coupe nette qui souligne la mâchoire.",
+    "Montrez où vous voulez que la ligne du carré arrive une fois sèche.",
+    "coupe carré",
+  ],
+  [
+    "Les tresses sculptées",
+    "tresses",
+    "Des mèches entrelacées pour dessiner un motif.",
+    "Précisez la taille des tresses et demandez une tension confortable.",
+    "tresses afro",
+  ],
+  [
+    "La coupe pixie",
+    "pixie",
+    "Une coupe courte à la nuque, avec du relief sur le dessus.",
+    "Choisissez la longueur que vous voulez garder sur le front et autour des oreilles.",
+    "coupe pixie",
+  ],
+  [
+    "Le dégradé à frange rideau",
+    "rideau",
+    "Des mèches de différentes longueurs et une frange qui s’ouvre autour du visage.",
+    "Indiquez où vous voulez que la mèche la plus courte tombe.",
+    "frange rideau dégradé",
+  ],
+  [
+    "L’afro arrondi",
+    "afro",
+    "Une silhouette ronde qui met en valeur le volume des cheveux crépus.",
+    "Discutez de la hauteur et du volume à conserver sur les côtés.",
+    "coupe afro naturelle",
+  ],
+];
+function styleGallery() {
+  return (
+    head("LE GUIDE DES FORMES", "Le carnet des coupes & coiffures") +
+    '<p class="guideintro">Une coupe change la forme des cheveux ; une coiffure change la façon de les porter. Explorez les deux et gardez les bons mots pour votre prochain rendez-vous.</p><div class="grid stylegrid">' +
+    styles
+      .map(
+        ([t, img, desc, brief, key]) =>
+          `<article class="card"><div class="photo"><img src="assets/${img}.jpg" alt="${t}"></div><div class="info"><span class="eyebrow">${img === "tresses" ? "COIFFURE TRESSÉE" : "FORME & TEXTURE"}</span><h3>${t}</h3><p>${desc}</p><details><summary>Les mots à dire au salon</summary><p>${brief}</p></details><a class="cta" target="_blank" href="https://www.google.com/maps/search/${encodeURIComponent(key + " Lyon")}">Trouver un spécialiste ↗</a></div></article>`,
+      )
+      .join("") +
+    '</div><p class="guideintro">Pour aller plus loin : quelle frange selon la forme du visage ? [<a href="https://www.franckprovost-expert.com/le-mag-expert/coiffure/quelle-frange-selon-la-forme-de-mon-visage_a1086">2</a>]</p>'
+  );
+}

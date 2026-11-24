@@ -1,16 +1,73 @@
 // Base éditoriale publique : vocabulaire client, réponse validée, destination.
 const helpTopics = [
- ['routine diagnostic questionnaire personnalisé besoins commencer test','Le diagnostic vous pose 14 questions sur vos cheveux et vos habitudes. À la fin, retrouvez quatre gestes de soin, des produits et une idée de coupe. Vous pouvez revenir en arrière sans perdre vos réponses.','diagnostic'],
- ['sec secs sèches pointes rêches hydrater nourrir cassants démêler noeuds','Pour des longueurs sèches, concentrez le soin sur les demi-longueurs et les pointes. Démêlez des pointes vers les racines. Le diagnostic adapte le choix entre masque et après-shampoing à votre temps disponible.','diagnostic'],
- ['gras grasses racines regraissent sébum laver lavage','Concentrez le shampoing sur le cuir chevelu, massez doucement et rincez. Si vos pointes sont sèches, réservez le soin aux longueurs plutôt qu’aux racines.','diagnostic'],
- ['boucles bouclés bouclées définir définition ondulations frisottis','Pour définir vos boucles, essayez un peu de gel sur cheveux humides et froissez les longueurs. Pendant le séchage, évitez de trop manipuler les mèches.','boutique'],
- ['fins plates volume légèreté plats','Pour préserver le volume, limitez les soins riches près des racines. La poudre volume du catalogue s’applique en petite quantité sur les racines sèches.','boutique'],
- ['coupe coiffure inspiration salon style choisir','Le carnet présente six styles illustrés, du carré graphique aux tresses sculptées. Chaque fiche explique le rendu et propose des mots à utiliser au salon.','inspiration'],
- ['coiffeur près trouver carte lyon géolocalisation spécialiste','La carte part de Lyon. Choisissez « Me localiser » et autorisez la localisation pour la recentrer. Les fiches du carnet proposent aussi une recherche de spécialistes à Lyon.','coiffeurs'],
- ['commande livraison retour remboursement payer paiement débit acheter argent','La boutique est une démonstration : la carte est fictive, aucun débit ni envoi n’est effectué. Le panier permet de tester les quantités et le paiement simulé.','boutique'],
- ['compte connexion historique pseudo retrouver commandes','Ouvrez « Mon compte » et choisissez un pseudo fictif avant de simuler une commande. Son historique reste dans ce navigateur, associé au pseudo. Aucun mot de passe n’est demandé.','accueil'],
- ['application télécharger mobile ios android','L’application mobile n’est pas encore disponible au téléchargement. Le diagnostic et la boutique fonctionnent déjà dans votre navigateur mobile.','application'],
- ['allergie ingrédients composition parfum inci','Je ne dispose pas de compositions INCI vérifiées. Je ne peux donc pas confirmer qu’un soin convient à une allergie. Vérifiez la liste des ingrédients sur le produit avant utilisation.','boutique'],
- ['eczéma douleur plaie chute pelade démangeaisons','Je peux expliquer les gestes cosmétiques, pas établir un diagnostic médical. Pour une chute soudaine, une irritation persistante ou une douleur, demandez conseil à un professionnel de santé.','diagnostic'],
- ['contact téléphone email mail appeler joindre','Les coordonnées professionnelles de New H’air ne sont pas encore publiées. Je peux déjà vous guider dans le catalogue, le diagnostic et les commandes simulées.','accueil']
+  [
+    "créateurs créatrices fondateurs équipe histoire motivations projet Pauline Cameron Louise Timothée",
+    "Pauline, Cameron, Louise et Timothée ont créé New H’air pour aider chacun à comprendre ses cheveux et choisir une routine adaptée. Retrouvez leur démarche sur la page Notre histoire.",
+    "accueil",
+  ],
+  [
+    "routine diagnostic questionnaire personnalisé besoins commencer test",
+    "Le diagnostic vous pose 14 questions sur vos cheveux et vos habitudes. À la fin, retrouvez quatre gestes de soin, des produits et une idée de coupe. Vous pouvez revenir en arrière sans perdre vos réponses.",
+    "diagnostic",
+  ],
+  [
+    "sec secs sèches pointes rêches hydrater nourrir cassants démêler noeuds",
+    "Pour des longueurs sèches, concentrez le soin sur les demi-longueurs et les pointes. Démêlez des pointes vers les racines. Le diagnostic adapte le choix entre masque et après-shampoing à votre temps disponible.",
+    "diagnostic",
+  ],
+  [
+    "gras grasses racines regraissent sébum laver lavage",
+    "Concentrez le shampoing sur le cuir chevelu, massez doucement et rincez. Si vos pointes sont sèches, réservez le soin aux longueurs plutôt qu’aux racines.",
+    "diagnostic",
+  ],
+  [
+    "boucles bouclés bouclées définir définition ondulations frisottis",
+    "Pour définir vos boucles, essayez un peu de gel sur cheveux humides et froissez les longueurs. Pendant le séchage, évitez de trop manipuler les mèches.",
+    "boutique",
+  ],
+  [
+    "fins plates volume légèreté plats",
+    "Pour préserver le volume, limitez les soins riches près des racines. La poudre volume du catalogue s’applique en petite quantité sur les racines sèches.",
+    "boutique",
+  ],
+  [
+    "coupe coiffure inspiration salon style choisir",
+    "Le carnet présente six styles illustrés, du carré graphique aux tresses sculptées. Chaque fiche explique le rendu et propose des mots à utiliser au salon.",
+    "inspiration",
+  ],
+  [
+    "coiffeur près trouver carte lyon géolocalisation spécialiste",
+    "La carte part de Lyon. Choisissez « Me localiser » et autorisez la localisation pour la recentrer. Les fiches du carnet proposent aussi une recherche de spécialistes à Lyon.",
+    "coiffeurs",
+  ],
+  [
+    "commande livraison retour remboursement payer paiement débit acheter argent",
+    "La boutique est une démonstration : la carte est fictive, aucun débit ni envoi n’est effectué. Le panier permet de tester les quantités et le paiement simulé.",
+    "boutique",
+  ],
+  [
+    "compte connexion historique pseudo retrouver commandes",
+    "Ouvrez « Mon compte » et choisissez un pseudo fictif avant de simuler une commande. Son historique reste dans ce navigateur, associé au pseudo. Aucun mot de passe n’est demandé.",
+    "accueil",
+  ],
+  [
+    "application télécharger mobile ios android",
+    "L’application mobile n’est pas encore disponible au téléchargement. Le diagnostic et la boutique fonctionnent déjà dans votre navigateur mobile.",
+    "application",
+  ],
+  [
+    "allergie ingrédients composition parfum inci",
+    "Je ne dispose pas de compositions INCI vérifiées. Je ne peux donc pas confirmer qu’un soin convient à une allergie. Vérifiez la liste des ingrédients sur le produit avant utilisation.",
+    "boutique",
+  ],
+  [
+    "eczéma douleur plaie chute pelade démangeaisons",
+    "Je peux expliquer les gestes cosmétiques, pas établir un diagnostic médical. Pour une chute soudaine, une irritation persistante ou une douleur, demandez conseil à un professionnel de santé.",
+    "diagnostic",
+  ],
+  [
+    "contact téléphone email mail appeler joindre",
+    "Les coordonnées professionnelles de New H’air ne sont pas encore publiées. Je peux déjà vous guider dans le catalogue, le diagnostic et les commandes simulées.",
+    "accueil",
+  ],
 ];
