@@ -3,7 +3,7 @@
     ...helpTopics,
     ...products.map(([name, type, , cost, profile]) => [
       name + " " + type,
-      `${name} coûte ${cost} € dans la boutique de démonstration. Il figure dans la sélection « ${profile} ».`,
+      `${name} coûte ${price(cost)} dans la boutique de démonstration. Il figure dans la sélection « ${profile} ».`,
       "boutique",
     ]),
     ...styles.map(([name, , desc, brief]) => [
@@ -31,28 +31,45 @@
       .map((x) => x.replace(/s$/, ""));
   const index = docs.map((d) => words(d[0]));
   function reply(text) {
+    const polite = text
+      .toLowerCase()
+      .trim()
+      .replace(/[!?.…]+$/g, "")
+      .trim();
+    if (/^(bonjour|salut|bonsoir|coucou)( à vous)?$/.test(polite))
+      return [
+        "Bonjour ! Cherchez-vous un soin, une idée de coupe ou de l’aide pour le panier ?",
+        null,
+      ];
+    if (/^(merci( beaucoup)?|super merci)$/.test(polite))
+      return [
+        "Avec plaisir ! Je reste là si vous avez une autre question beauté.",
+        null,
+      ];
     const query = words(text);
     let best = -1,
       score = 0;
     index.forEach((keys, i) => {
       const hit = query.filter((k) => keys.includes(k));
       const value =
-        hit.reduce(
+        (hit.reduce(
           (v, k) =>
             v +
             Math.log(
               1 + docs.length / index.filter((d) => d.includes(k)).length,
             ),
           0,
-        ) / Math.pow(keys.length, 0.18);
+        ) /
+          Math.pow(keys.length, 0.18)) *
+        Math.sqrt(hit.length / Math.max(1, query.length));
       if (value > score) {
         score = value;
         best = i;
       }
     });
-    return best < 0
+    return best < 0 || score < 1.1
       ? [
-          "Je n’ai pas de réponse vérifiée sur ce point. Pouvez-vous préciser le nom du soin, votre objectif ou la rubrique concernée ?",
+          "Je réponds aux questions sur New H’air. Essayez « Mes pointes sont sèches », « Prix du masque nutritif » ou « Comment payer ? ».",
           null,
         ]
       : docs[best].slice(1);
@@ -89,6 +106,10 @@
     trigger.setAttribute("aria-expanded", show);
     (show ? field : trigger).focus();
   }
+  const compact = () =>
+    trigger.classList.toggle("compact", window.scrollY > 48);
+  compact();
+  window.addEventListener("scroll", compact, { passive: true });
   trigger.onclick = () => toggle(box.hidden);
   document.querySelector("#closeChat").onclick = () => toggle(false);
   box.onkeydown = (e) => {

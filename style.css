@@ -58,7 +58,7 @@ aside {
 }
 aside label,
 .eyebrow {
-  font-size: 10px;
+  font-size: 14px;
   letter-spacing: 1.8px;
   font-weight: 700;
 }
@@ -96,7 +96,7 @@ i svg {
   margin-top: auto;
   border-top: 1px solid #58473c;
   padding: 22px 9px 0;
-  font-size: 12px;
+  font-size: 14px;
   color: #d1c0b4;
 }
 .dot {
@@ -124,7 +124,7 @@ header {
 header small {
   display: block;
   color: #84796f;
-  font-size: 12px;
+  font-size: 14px;
   margin-top: 4px;
 }
 button {
@@ -139,7 +139,7 @@ button {
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
 }
 .cart b {
@@ -156,7 +156,7 @@ button {
 .hero {
   background:
     linear-gradient(90deg, #251710e8, transparent 78%),
-    url("assets/hero.jpg") center 45% / cover;
+    url("assets/hero.webp") center 45% / cover;
   border-radius: 15px;
   min-height: 330px;
   display: flex;
@@ -165,7 +165,7 @@ button {
   color: #fffaf6;
 }
 .tag {
-  font-size: 9px;
+  font-size: 14px;
   letter-spacing: 1.6px;
   font-weight: bold;
   background: #ffffff19;
@@ -194,7 +194,7 @@ h1 em {
   color: #f0b09b;
 }
 .hero p {
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
   color: #eee4dc;
 }
@@ -205,7 +205,7 @@ h1 em {
   background: #eca38f;
   color: #33231b;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 14px;
   padding: 13px 17px;
   border-radius: 7px;
   margin-top: 20px;
@@ -237,7 +237,7 @@ h1 em {
 }
 .eyebrow {
   color: #96644f;
-  font-size: 9px;
+  font-size: 14px;
 }
 .promo h3 {
   font: 23px Georgia;
@@ -245,7 +245,7 @@ h1 em {
 }
 .promo p,
 .muted {
-  font-size: 12px;
+  font-size: 14px;
   color: #766b62;
   line-height: 1.6;
 }
@@ -255,7 +255,7 @@ h1 em {
   gap: 8px;
   margin-left: auto;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 14px;
   white-space: nowrap;
 }
 .promo .link {
@@ -303,7 +303,7 @@ h2 {
 }
 .badge {
   left: 12px;
-  font-size: 10px;
+  font-size: 14px;
   padding: 6px 10px;
 }
 .fav {
@@ -419,7 +419,7 @@ iframe {
     font-size: 23px;
   }
   .brand small {
-    font-size: 10px;
+    font-size: 14px;
   }
   aside label,
   .sidebottom {
@@ -431,7 +431,7 @@ iframe {
   }
   nav a {
     white-space: nowrap;
-    font-size: 12px;
+    font-size: 14px;
     padding: 9px;
     gap: 5px;
     margin: 0;
@@ -527,7 +527,7 @@ nav a {
   margin: 0;
   padding: 10px 9px;
   gap: 6px;
-  font-size: 12px;
+  font-size: 14px;
 }
 nav i svg {
   width: 16px;
@@ -638,7 +638,7 @@ header,
 .ritualpic {
   flex: 1;
   min-height: 160px;
-  background: url("assets/masque.jpg") center 55% / cover;
+  background: url("assets/masque.webp") center 55% / cover;
   padding: 14px;
 }
 .ritualpic .tag {
@@ -657,7 +657,7 @@ header,
 .steps p {
   line-height: 1.55;
   color: #6e5a4e;
-  font-size: 13px;
+  font-size: 14px;
 }
 .ritual .link {
   margin-top: 10px;
@@ -674,7 +674,7 @@ header,
 .quizside {
   background:
     linear-gradient(0deg, #231910bc, transparent),
-    url("assets/tresses.jpg") center/cover;
+    url("assets/tresses.webp") center/cover;
   color: white;
   padding: 22px;
   display: flex;
@@ -752,7 +752,7 @@ progress {
   color: #faece0;
   border-radius: 12px;
   letter-spacing: 1.8px;
-  font-size: 10px;
+  font-size: 14px;
 }
 .testcard strong {
   display: block;
@@ -791,7 +791,7 @@ progress {
     gap: 4px;
   }
   .actions button {
-    font-size: 11px;
+    font-size: 14px;
     padding: 9px;
   }
   .cover .hero {
@@ -960,7 +960,7 @@ progress {
 .quizside {
   padding: clamp(20px, 3vw, 42px);
   background-image:
-    linear-gradient(0deg, #281910ee, #28191035), url("assets/tresses.jpg");
+    linear-gradient(0deg, #281910ee, #28191035), url("assets/tresses.webp");
   min-height: 570px;
 }
 .quizside h3 {
@@ -1205,7 +1205,7 @@ progress {
   padding-block: 5px;
 }
 .prompts button {
-  font-size: 12px;
+  font-size: 14px;
   padding: 7px;
 }
 .chathead button {
@@ -1265,13 +1265,13 @@ progress {
 .origin-image {
   min-height: 300px;
   position: relative;
-  background: url("assets/hero.jpg") 77% center/cover;
+  background: url("assets/hero.webp") 77% center/cover;
 }
 .origin-image span {
   position: absolute;
   bottom: 18px;
   right: 18px;
-  font-size: 10px;
+  font-size: 14px;
   letter-spacing: 2px;
   color: white;
 }
@@ -1353,21 +1353,222 @@ dialog:not([open])::backdrop {
   position: relative;
   z-index: 1;
 }
-#mobileMenu{display:none}
-@media(max-width:700px), (pointer:coarse) and (max-width:950px){
-  body{padding-inline:env(safe-area-inset-left) env(safe-area-inset-right);-webkit-text-size-adjust:100%}
-  aside{display:flex;flex-flow:row wrap;justify-content:space-between;gap:4px;padding:calc(8px + env(safe-area-inset-top)) 16px 8px}
-  .brand{margin:0}.brand img{width:45px}
-  #mobileMenu{display:inline-flex;align-items:center;gap:8px;min-height:44px;background:#504035;color:#fff6ec;padding:10px 14px}
-  #mobileMenu[aria-expanded=false]+nav{display:none}
-  #mobileMenu[aria-expanded=true]+nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:4px;margin:6px 0 0;overflow:visible}
-  nav a{min-height:46px;white-space:normal;font-size:14px;line-height:1.2}
-  header{flex-wrap:wrap;gap:8px}.actions{flex-wrap:wrap}.actions button{min-height:44px}
-  button,select,summary,.cta{touch-action:manipulation}.filters select,input:not([type=radio]){font-size:16px;max-width:100%;min-height:44px}
-  .fav,.close,#closeChat{min-height:44px;min-width:44px;align-items:center;justify-content:center}
-  dialog{max-height:calc(var(--visible-height,100dvh) - 30px);overflow-y:auto;overscroll-behavior:contain}
-  #chatTrigger{bottom:calc(12px + env(safe-area-inset-bottom));right:calc(12px + env(safe-area-inset-right))}
-  #chatbox{bottom:calc(8px + env(safe-area-inset-bottom) + var(--keyboard-gap,0px));right:calc(8px + env(safe-area-inset-right));width:min(410px,calc(100% - 16px - env(safe-area-inset-right) - env(safe-area-inset-left)));max-height:min(540px,calc(var(--visible-height,100dvh) - 18px - env(safe-area-inset-bottom)))}
-  #chatlog{overscroll-behavior:contain}#askChat button{min-width:44px;min-height:44px}.legalfoot{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+#mobileMenu {
+  display: none;
 }
-@media(max-width:380px){.results .grid{grid-template-columns:1fr}.quizcontrols{flex-wrap:wrap}.filters select{width:100%}.quizbody,.results{min-width:0}.row{gap:6px;flex-wrap:wrap}}
+@media (max-width: 700px), (pointer: coarse) and (max-width: 950px) {
+  body {
+    padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
+    -webkit-text-size-adjust: 100%;
+  }
+  aside {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    gap: 4px;
+    padding: calc(8px + env(safe-area-inset-top)) 16px 8px;
+  }
+  .brand {
+    margin: 0;
+  }
+  .brand img {
+    width: 45px;
+  }
+  #mobileMenu {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    background: #504035;
+    color: #fff6ec;
+    padding: 10px 14px;
+  }
+  #mobileMenu[aria-expanded="false"] + nav {
+    display: none;
+  }
+  #mobileMenu[aria-expanded="true"] + nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 4px;
+    margin: 6px 0 0;
+    overflow: visible;
+  }
+  nav a {
+    min-height: 46px;
+    white-space: normal;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .actions {
+    flex-wrap: wrap;
+  }
+  .actions button {
+    min-height: 44px;
+  }
+  button,
+  select,
+  summary,
+  .cta {
+    touch-action: manipulation;
+  }
+  .filters select,
+  input:not([type="radio"]) {
+    font-size: 16px;
+    max-width: 100%;
+    min-height: 44px;
+  }
+  .fav,
+  .close,
+  #closeChat {
+    min-height: 44px;
+    min-width: 44px;
+    align-items: center;
+    justify-content: center;
+  }
+  dialog {
+    max-height: calc(var(--visible-height, 100dvh) - 30px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  #chatTrigger {
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    right: calc(12px + env(safe-area-inset-right));
+  }
+  #chatbox {
+    bottom: calc(8px + env(safe-area-inset-bottom) + var(--keyboard-gap, 0px));
+    right: calc(8px + env(safe-area-inset-right));
+    width: min(
+      410px,
+      calc(100% - 16px - env(safe-area-inset-right) - env(safe-area-inset-left))
+    );
+    max-height: min(
+      540px,
+      calc(var(--visible-height, 100dvh) - 18px - env(safe-area-inset-bottom))
+    );
+  }
+  #chatlog {
+    overscroll-behavior: contain;
+  }
+  #askChat button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .legalfoot {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
+  }
+}
+@media (max-width: 380px) {
+  .results .grid {
+    grid-template-columns: 1fr;
+  }
+  .quizcontrols {
+    flex-wrap: wrap;
+  }
+  .filters select {
+    width: 100%;
+  }
+  .quizbody,
+  .results {
+    min-width: 0;
+  }
+  .row {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+}
+@font-face {
+  font-family: Source Sans;
+  src: url("assets/source-sans.woff2") format("woff2");
+  font-weight: 200 900;
+  font-display: swap;
+}
+body,
+input,
+select,
+button {
+  font-family: "Source Sans", sans-serif;
+}
+body {
+  font-size: 16px;
+}
+.eyebrow {
+  color: #724432;
+}
+.quizside .tag {
+  background: #372820;
+  color: #fff;
+}
+.origin-image {
+  background-image:
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.82) 0%,
+      rgba(0, 0, 0, 0.68) 15%,
+      transparent 50%
+    ),
+    url("assets/hero.webp");
+}
+.origin-image span {
+  color: white;
+  bottom: 10px;
+}
+.detailphoto {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.brand img {
+  height: auto;
+}
+.muted,
+.quizbody small {
+  color: #66564a;
+}
+.legalfoot a {
+  text-decoration: underline;
+}
+:focus-visible {
+  outline: 3px solid #864c33;
+  outline-offset: 3px;
+}
+aside :focus-visible,
+.legalfoot :focus-visible {
+  outline-color: #ffd1b5;
+}
+@media (max-width: 700px), (pointer: coarse) and (max-width: 950px) {
+  #content {
+    padding-bottom: calc(82px + env(safe-area-inset-bottom));
+  }
+  #chatTrigger.compact {
+    height: 48px;
+    width: 48px;
+    font-size: 22px;
+    padding: 0;
+    border-radius: 50%;
+  }
+  #chatTrigger.compact span {
+    display: none;
+  }
+}
+.origin-image span {
+  background: linear-gradient(90deg, #251710e8, #251710dc);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+.quizside {
+  background-image:
+    linear-gradient(0deg, #201710e8, #201710a8), url("assets/tresses.webp");
+}
+.quizbody small,
+.sub {
+  font-size: 14px;
+}
+.legalfoot a:focus-visible {
+  outline-color: white;
+}

@@ -133,6 +133,17 @@ questions.push(
     ],
   ],
 );
+questions.push([
+  "Votre couleur",
+  "Vos longueurs portent-elles une coloration ?",
+  "Cette information complète vos habitudes de coiffage, même si vous faites surtout des brushings.",
+  [
+    "Non, ma couleur est naturelle",
+    "Oui, coloration ou mèches",
+    "Oui, décoloration",
+    "Je préfère ne pas préciser",
+  ],
+]);
 const countQuestions = questions.length;
 function restoreQuiz() {
   let raw;
@@ -221,9 +232,18 @@ function styleNotes() {
 }
 function routine() {
   const [texture, width, root, ends, freq, tech, night, goal, time] = answers;
-  const care = ends && time ? 0 : 3,
-    finish = goal === 1 ? 6 : goal === 2 ? 4 : 2,
-    kit = [1, care, finish];
+  // Only the four non-demographic products may enter a consultation kit.
+  const mask = texture >= 2 || (ends > 0 && time > 0);
+  const colored =
+    [1, 2].includes(answers[14]) || (answers[14] === 3 && tech === 1);
+  const oil = colored || goal === 0 || goal === 3;
+  const gel = goal === 2 || (texture >= 1 && goal !== 1);
+  const kit = [
+    1,
+    ...(mask ? [0] : []),
+    ...(oil ? [2] : []),
+    ...(gel ? [4] : []),
+  ];
   const steps = [
     [
       "01 · LE LAVAGE",
@@ -243,14 +263,14 @@ function routine() {
     [
       "02 · LE SOIN",
       "Assouplir les longueurs",
-      `${care === 0 ? "Appliquez le masque nutritif" : "Répartissez l’après-shampoing"} ${width === 0 ? "sur les pointes uniquement" : "sur les demi-longueurs et les pointes"}. ${ends ? "Démêlez en remontant progressivement depuis les pointes." : "Lissez doucement les mèches avec les doigts."} ${time === 0 ? "Gardez un rituel court." : "Respectez le temps de pose indiqué sur le soin."}`,
+      `${mask ? "Appliquez le masque nutritif" : "Pressez doucement une serviette"} ${width === 0 ? "sur les pointes uniquement" : "sur les demi-longueurs et les pointes"}. ${ends ? "Démêlez en remontant progressivement depuis les pointes." : "Lissez doucement les mèches avec les doigts."} ${time === 0 ? "Gardez un rituel court." : "Respectez le temps de pose indiqué sur le soin."}`,
     ],
     [
       "03 · LA FINITION",
       "Coiffer sans brusquer",
       [
         "Lissez une petite goutte d’huile sur les pointes.",
-        "Appliquez une touche de poudre sur les racines sèches.",
+        "Décollez les racines du bout des doigts pendant le séchage.",
         "Froissez vos mèches humides avec un peu de gel.",
         "Répartissez une touche d’huile sur les frisottis.",
       ][goal] +
@@ -276,7 +296,7 @@ function routine() {
         ][tech],
     ],
   ];
-  quizView().innerHTML = `<div class="results">${head("VOTRE ORDONNANCE BEAUTÉ · 4 GESTES", "Votre routine sur mesure")}<p>${questions[0][3][texture]} · ${questions[7][3][goal]} · ${questions[8][3][time]}</p><div class="steps">${steps.map(([k, t, p]) => `<article><span class="eyebrow">${k}</span><h3>${t}</h3><p>${p}</p></article>`).join("")}</div>${styleNotes()}<h2>Votre sélection de soins</h2><div class="grid">${cards(kit.map((n) => products[n]))}</div><button class="cta" onclick="cart.push(${kit.join(",")});save();bag()">Ajouter les 3 soins au panier</button> <button onclick="step=0;answers=[];persistQuiz();quiz()">Refaire le diagnostic</button></div>`;
+  quizView().innerHTML = `<div class="results">${head("VOTRE ORDONNANCE BEAUTÉ · 4 GESTES", "Votre routine sur mesure")}<p>${questions[0][3][texture]} · ${questions[7][3][goal]} · ${questions[8][3][time]}</p><div class="steps">${steps.map(([k, t, p]) => `<article><span class="eyebrow">${k}</span><h3>${t}</h3><p>${p}</p></article>`).join("")}</div>${styleNotes()}<h2>Votre sélection de soins</h2><p>Le shampoing constitue la base de lavage.${mask ? " Le masque accompagne vos longueurs ou votre texture." : ""}${oil ? (colored ? " L’huile est proposée en finition sur vos longueurs colorées." : " L’huile correspond à votre recherche de souplesse ou de discipline.") : ""}${gel ? " Le gel aide à dessiner le mouvement de vos mèches." : ""}</p><div class="grid">${cards(kit.map((n) => products[n]))}</div><button class="cta" onclick="cart.push(${kit.join(",")});save();bag()">Ajouter ma sélection au panier</button> <button onclick="step=0;answers=[];persistQuiz();quiz()">Refaire le diagnostic</button></div>`;
   draw();
 }
 function readOrders() {
@@ -298,10 +318,10 @@ let alias = load("nhAlias") || "";
 function accountLabel() {
   accountBtn.textContent = alias || "Mon compte";
 }
-function account() {
+function account(resumePayment = false) {
   if (!alias) {
     pop(
-      `${head("ESPACE DÉMO", "Mon compte")}<p>Choisissez un pseudo fictif pour retrouver vos commandes simulées sur cet appareil. Aucun mot de passe nécessaire.</p><form id="profileForm"><label>Pseudo fictif <input id="pseudo" required maxlength="24" autocomplete="off"></label><button class="cta">Ouvrir mon espace</button></form>`,
+      `${head("ESPACE DÉMO", "Mon compte")}<p>${resumePayment ? "Votre panier est conservé. Ouvrez un compte démo, puis confirmez le paiement. " : ""}Choisissez un pseudo fictif pour retrouver vos commandes simulées sur cet appareil. Aucun mot de passe nécessaire.</p><form id="profileForm"><label>Pseudo fictif <input id="pseudo" required maxlength="24" autocomplete="off"></label><button class="cta">Ouvrir mon espace</button></form>`,
     );
     profileForm.onsubmit = (e) => {
       e.preventDefault();
@@ -310,7 +330,7 @@ function account() {
       alias = v;
       store("nhAlias", v);
       accountLabel();
-      account();
+      resumePayment ? checkout() : account();
     };
     return;
   }
@@ -348,6 +368,7 @@ function checkout() {
 }
 function pay() {
   if (!cart.length) return bag();
+  if (!alias) return account(true);
   let o = {
     owner: alias,
     ref: "NH-" + Date.now().toString(36).toUpperCase(),

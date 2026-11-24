@@ -7,12 +7,12 @@ const helpTopics = [
   ],
   [
     "routine diagnostic questionnaire personnalisé besoins commencer test",
-    "Le diagnostic vous pose 14 questions sur vos cheveux et vos habitudes. À la fin, retrouvez quatre gestes de soin, des produits et une idée de coupe. Vous pouvez revenir en arrière sans perdre vos réponses.",
+    "Le diagnostic vous pose 15 questions sur vos cheveux et vos habitudes. À la fin, retrouvez quatre gestes de soin, des produits et une idée de coupe. Vous pouvez revenir en arrière sans perdre vos réponses.",
     "diagnostic",
   ],
   [
     "sec secs sèches pointes rêches hydrater nourrir cassants démêler noeuds",
-    "Pour des longueurs sèches, concentrez le soin sur les demi-longueurs et les pointes. Démêlez des pointes vers les racines. Le diagnostic adapte le choix entre masque et après-shampoing à votre temps disponible.",
+    "Pour des longueurs sèches, concentrez le soin sur les demi-longueurs et les pointes. Démêlez des pointes vers les racines. Le diagnostic adapte la sélection de soins à votre texture, votre couleur et votre objectif.",
     "diagnostic",
   ],
   [

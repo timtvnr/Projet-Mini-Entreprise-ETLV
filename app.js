@@ -6,6 +6,7 @@ const pages = [
     "Photo inspi",
     "Partenaires",
     "Application mobile",
+    "Mes favoris",
   ],
   ids = [
     "accueil",
@@ -15,6 +16,7 @@ const pages = [
     "inspiration",
     "partenaires",
     "application",
+    "favoris",
   ],
   ico = [
     "house",
@@ -24,6 +26,7 @@ const pages = [
     "images",
     "handshake",
     "smartphone",
+    "heart",
   ],
   I = (n) => `<i data-i="${n}"></i>`,
   draw = () =>
@@ -39,15 +42,15 @@ const products = [
   [
     "Après-shampoing soyeux",
     "Après-shampoing",
-    "shampoing",
+    "conditioner",
     19,
     "Senior",
     "€€",
   ],
-  ["Gel définition", "Gel", "masque", 14, "Cheveux bouclés", "€"],
-  ["Cire modelante", "Cire", "masque", 18, "Homme", "€€"],
-  ["Poudre volume", "Poudre", "shampoing", 17, "Homme", "€"],
-  ["Shampoing délicat", "Shampoing", "shampoing", 12, "Bébé", "€"],
+  ["Gel définition", "Gel", "gel", 14, "Cheveux bouclés", "€"],
+  ["Cire modelante", "Cire", "cire", 18, "Homme", "€€"],
+  ["Poudre volume", "Poudre", "poudre", 17, "Homme", "€"],
+  ["Shampoing délicat", "Shampoing", "bebe", 12, "Bébé", "€"],
 ]; // Keep the demo usable when browser storage is blocked or contains stale values.
 const memoryData = new Map();
 function load(key) {
@@ -86,12 +89,55 @@ const profiles = [
   "Bébé",
   "Senior",
 ];
+const productNotes = [
+  [
+    "Un masque pour envelopper les longueurs en manque de souplesse.",
+    "Après le lavage, répartissez sur les longueurs, laissez poser selon la notice puis rincez.",
+  ],
+  [
+    "Une base lavante pour le rituel du quotidien.",
+    "Massez le cuir chevelu mouillé avec la pulpe des doigts, puis rincez.",
+  ],
+  [
+    "Une huile de finition pour lisser visuellement les pointes.",
+    "Chauffez une goutte entre les mains et effleurez les longueurs.",
+  ],
+  [
+    "Un soin à rincer pour faciliter le démêlage.",
+    "Distribuez sur les demi-longueurs humides, démêlez puis rincez.",
+  ],
+  [
+    "Un gel coiffant pour dessiner les mèches.",
+    "Sur cheveux humides, froissez les boucles puis laissez sécher.",
+  ],
+  [
+    "Une cire pour modeler une coupe courte.",
+    "Travaillez une noisette entre les doigts puis modelez les mèches sèches.",
+  ],
+  [
+    "Une poudre coiffante pour donner du relief en racines.",
+    "Déposez une touche à la racine sur cheveux secs et répartissez du bout des doigts.",
+  ],
+  [
+    "Un shampoing présenté dans la gamme bébé de démonstration.",
+    "Un adulte applique et rince le produit en suivant les indications de la notice.",
+  ],
+];
+// Intrinsic dimensions reserve space before lazy-loaded photos arrive.
+function photoSize(key) {
+  const portrait = ["afro", "carre", "poudre", "rideau", "tresses"].includes(
+    key,
+  );
+  return portrait
+    ? 'width="667" height="1000"'
+    : `width="1100" height="${["hero", "pixie", "cire", "bebe"].includes(key) ? 733 : 825}"`;
+}
 function cards(arr) {
   return (
     arr
       .map((p) => {
         let n = products.indexOf(p);
-        return `<article class="card"><div class="photo"><img src="assets/${p[2]}.jpg" alt="${p[0]}" onclick="detail(${n})"><span class="badge">${n === 1 ? "Essentiel" : "Nouveauté"}</span><button aria-label="Favori" class="fav ${fav.includes(n) ? "on" : ""}" onclick="favorite(${n},this)">${I("heart")}</button></div><div class="info"><span class="eyebrow">${p[1].toUpperCase()}</span><h3><a href="#" onclick="detail(${n});return false">${p[0]}</a></h3><span class="muted">${p[3]},00 €</span></div></article>`;
+        return `<article class="card"><div class="photo"><img loading="lazy" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}" onclick="detail(${n})">${[0, 2].includes(n) ? '<span class="badge">Nouveauté</span>' : ""}<button aria-label="Favori : ${p[0]}" aria-pressed="${fav.includes(n)}" class="fav ${fav.includes(n) ? "on" : ""}" onclick="favorite(${n},this)">${I("heart")}</button></div><div class="info"><span class="eyebrow">${p[1].toUpperCase()}</span><h3><a href="#" onclick="detail(${n});return false">${p[0]}</a></h3><span class="muted">${price(p[3])}</span></div></article>`;
       })
       .join("") || "<p>Aucun soin ne correspond à ces filtres.</p>"
   );
@@ -99,7 +145,9 @@ function cards(arr) {
 function favorite(n, b) {
   fav = fav.includes(n) ? fav.filter((i) => i !== n) : [...fav, n];
   store("fav", JSON.stringify(fav));
-  b.classList.toggle("on");
+  b.classList.toggle("on", fav.includes(n));
+  b.setAttribute("aria-pressed", String(fav.includes(n)));
+  if (location.hash === "#favoris") render();
 }
 const head = (k, t) => `<div class="eyebrow">${k}</div><h2>${t}</h2>`,
   banner = `<div class="promo appbanner"><span class="symbol">${I("smartphone")}</span><div>${head("NEW H’AIR MOBILE", "Votre routine à portée de main")}</div>${A("Découvrir l’application", "application", "link")}</div>`,
@@ -150,13 +198,14 @@ function filter() {
 }
 function pop(s) {
   inside.innerHTML = s;
+  inside.querySelector("h2").id = "modalTitle";
   if (!modal.open) modal.showModal();
   draw();
 }
 function detail(n) {
   let p = products[n];
   pop(
-    `<span class="eyebrow">${p[1]}</span><h2>${p[0]}</h2><p>Un soin pour votre profil : ${p[4].toLowerCase()}.</p><b>${p[3]},00 €</b><br><button class="cta" onclick="cart.push(${n});save();bag()">Ajouter au panier</button>`,
+    `<span class="eyebrow">${p[1]}</span><h2>${p[0]}</h2><img class="detailphoto" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}"><p>${productNotes[n][0]}</p><p><strong>Pour qui ?</strong> ${p[4]}.</p><p><strong>Le geste :</strong> ${productNotes[n][1]}</p><b>${price(p[3])}</b><br><button class="cta" onclick="cart.push(${n});save();bag()">Ajouter au panier</button>`,
   );
 }
 function save() {
@@ -191,9 +240,10 @@ function render() {
   crumb.textContent = pages[n];
   document.title = pages[n] + " · New H’air";
   nav.innerHTML = pages
-    .map(
-      (p, i) =>
-        `<a ${i === n ? 'aria-current="page"' : ""} class="${i === n ? "active" : ""}" href="#${ids[i]}">${I(ico[i])}${p}</a>`,
+    .map((p, i) =>
+      [5, 6].includes(i)
+        ? ""
+        : `<a ${i === n ? 'aria-current="page"' : ""} class="${i === n ? "active" : ""}" href="#${ids[i]}">${I(ico[i])}${p}</a>`,
     )
     .join("");
   content.innerHTML = [
@@ -206,7 +256,7 @@ function render() {
       '<div class="panel" id="quiz"></div>',
     () =>
       head("AUTOUR DE VOUS", "Coiffeurs spécialisés") +
-      `<div class="panel"><iframe title="Carte des environs" id="map"></iframe><button class="cta" onclick="findPosition()">Me localiser</button><p id="msg">Carte centrée sur Lyon. Découvrez les <a href="https://www.google.com/maps/search/coiffeur+spécialisé+cheveux+bouclés+Lyon" target="_blank">salons pour cheveux bouclés à Lyon ↗</a>.</p></div>`,
+      `<div class="panel"><iframe title="Carte des environs" id="map"></iframe><button class="cta" onclick="findPosition()">Me localiser</button><p id="msg">Carte centrée sur Lyon. Découvrez les <a href="https://www.google.com/maps/search/coiffeur+spécialisé+cheveux+bouclés+Lyon" target="_blank" rel="noopener">salons pour cheveux bouclés à Lyon ↗</a>.</p></div>`,
     styleGallery,
     () =>
       head("COLLABORATIONS", "Espace partenaires") +
@@ -216,6 +266,11 @@ function render() {
       '<div class="panel"><span class="eyebrow">BIENTÔT DISPONIBLE</span><h2>Vos soins vous suivent partout.</h2><p>L’application mobile sera prochainement disponible au téléchargement. En attendant, découvrez votre routine sur le site.</p>' +
       A("Découvrir ma routine", "diagnostic") +
       "</div>",
+    () =>
+      head("MON CARNET", "Mes favoris") +
+      (fav.length
+        ? `<div class="grid">${cards(fav.map((i) => products[i]))}</div>`
+        : `<p class="guideintro">Touchez le cœur sur une fiche pour garder vos soins ici.</p>${A("Explorer la boutique", "boutique")}`),
   ][n]();
   if (n === 2) openQuiz();
   if (n === 3) locate(45.76, 4.835);
@@ -276,28 +331,49 @@ function styleGallery() {
     styles
       .map(
         ([t, img, desc, brief, key]) =>
-          `<article class="card"><div class="photo"><img src="assets/${img}.jpg" alt="${t}"></div><div class="info"><span class="eyebrow">${img === "tresses" ? "COIFFURE TRESSÉE" : "FORME & TEXTURE"}</span><h3>${t}</h3><p>${desc}</p><details><summary>Les mots à dire au salon</summary><p>${brief}</p></details><a class="cta" target="_blank" href="https://www.google.com/maps/search/${encodeURIComponent(key + " Lyon")}">Trouver un spécialiste ↗</a></div></article>`,
+          `<article class="card"><div class="photo"><img loading="lazy" ${photoSize(img)} src="assets/${img}.webp" alt="${t}"></div><div class="info"><span class="eyebrow">${img === "tresses" ? "COIFFURE TRESSÉE" : "FORME & TEXTURE"}</span><h3>${t}</h3><p>${desc}</p><details><summary>Les mots à dire au salon</summary><p>${brief}</p></details><a class="cta" target="_blank" rel="noopener" href="https://www.google.com/maps/search/${encodeURIComponent(key + " Lyon")}">Trouver un spécialiste ↗</a></div></article>`,
       )
       .join("") +
-    '</div><p class="guideintro">Pour aller plus loin : quelle frange selon la forme du visage ? [<a href="https://www.franckprovost-expert.com/le-mag-expert/coiffure/quelle-frange-selon-la-forme-de-mon-visage_a1086">2</a>]</p>'
+    '</div><p class="guideintro">Pour aller plus loin : quelle frange selon la forme du visage ? <a href="https://www.franckprovost-expert.com/le-mag-expert/coiffure/quelle-frange-selon-la-forme-de-mon-visage_a1086">Lire le guide Franck Provost</a></p>'
   );
 }
 
 // A disclosure menu avoids horizontal navigation on handheld screens.
-const mobileMenuButton = document.getElementById('mobileMenu');
-function setMobileMenu(open) { mobileMenuButton.setAttribute('aria-expanded', String(open)); }
-mobileMenuButton.addEventListener('click', () => setMobileMenu(mobileMenuButton.getAttribute('aria-expanded') === 'false'));
-document.querySelector('aside').addEventListener('click', event => { if (event.target.closest('a')) setMobileMenu(false); });
-window.addEventListener('hashchange', () => setMobileMenu(false));
-document.addEventListener('keydown', event => { if(event.key === 'Escape' && mobileMenuButton.offsetWidth && mobileMenuButton.getAttribute('aria-expanded') === 'true'){ setMobileMenu(false); mobileMenuButton.focus(); } });
+const mobileMenuButton = document.getElementById("mobileMenu");
+function setMobileMenu(open) {
+  mobileMenuButton.setAttribute("aria-expanded", String(open));
+}
+mobileMenuButton.addEventListener("click", () =>
+  setMobileMenu(mobileMenuButton.getAttribute("aria-expanded") === "false"),
+);
+document.querySelector("aside").addEventListener("click", (event) => {
+  if (event.target.closest("a")) setMobileMenu(false);
+});
+window.addEventListener("hashchange", () => setMobileMenu(false));
+document.addEventListener("keydown", (event) => {
+  if (
+    event.key === "Escape" &&
+    mobileMenuButton.offsetWidth &&
+    mobileMenuButton.getAttribute("aria-expanded") === "true"
+  ) {
+    setMobileMenu(false);
+    mobileMenuButton.focus();
+  }
+});
 // Soft keyboards can resize only the visual viewport, notably in Safari.
 if (window.visualViewport) {
   function syncViewport() {
     const view = window.visualViewport;
-    document.documentElement.style.setProperty('--visible-height', `${view.height}px`);
-    document.documentElement.style.setProperty('--keyboard-gap', `${Math.max(0, window.innerHeight-view.height-view.offsetTop)}px`);
+    document.documentElement.style.setProperty(
+      "--visible-height",
+      `${view.height}px`,
+    );
+    document.documentElement.style.setProperty(
+      "--keyboard-gap",
+      `${Math.max(0, window.innerHeight - view.height - view.offsetTop)}px`,
+    );
   }
-  visualViewport.addEventListener('resize', syncViewport);
-  visualViewport.addEventListener('scroll', syncViewport);
+  visualViewport.addEventListener("resize", syncViewport);
+  visualViewport.addEventListener("scroll", syncViewport);
   syncViewport();
 }
