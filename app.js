@@ -4,8 +4,6 @@ const pages = [
     "Mon diagnostic",
     "Coiffeurs spécialisés",
     "Photo inspi",
-    "Partenaires",
-    "Application mobile",
     "Mes favoris",
   ],
   ids = [
@@ -14,8 +12,6 @@ const pages = [
     "diagnostic",
     "coiffeurs",
     "inspiration",
-    "partenaires",
-    "application",
     "favoris",
   ],
   ico = [
@@ -24,8 +20,6 @@ const pages = [
     "clipboard-list",
     "map-pin",
     "images",
-    "handshake",
-    "smartphone",
     "heart",
   ],
   I = (n) => `<i data-i="${n}"></i>`,
@@ -36,21 +30,21 @@ const pages = [
   A = (t, id, c = "cta") =>
     `<a class="${c}" href="#${id}">${t} ${I("arrow-right")}</a>`;
 const products = [
-  ["Masque nutritif", "Masque", "masque", 24, "Cheveux bouclés", "€€"],
-  ["Shampoing douceur", "Shampoing", "shampoing", 16, "Cheveux lisses", "€"],
-  ["Huile sublime", "Huile", "huile", 29, "Cheveux colorés", "€€€"],
+  ["Masque nutritif", "Masque", "masque", 24, "Nourrir les longueurs", "€€"],
+  ["Shampoing douceur", "Shampoing", "shampoing", 16, "Laver toutes les textures", "€"],
+  ["Huile sublime", "Huile", "huile", 29, "Assouplir les pointes, colorées ou non", "€€€"],
   [
     "Après-shampoing soyeux",
     "Après-shampoing",
     "conditioner",
     19,
-    "Senior",
+    "Démêler après le lavage",
     "€€",
   ],
-  ["Gel définition", "Gel", "gel", 14, "Cheveux bouclés", "€"],
-  ["Cire modelante", "Cire", "cire", 18, "Homme", "€€"],
-  ["Poudre volume", "Poudre", "poudre", 17, "Homme", "€"],
-  ["Shampoing délicat", "Shampoing", "bebe", 12, "Bébé", "€"],
+  ["Gel définition", "Gel", "gel", 14, "Définir les boucles", "€"],
+  ["Cire modelante", "Cire", "cire", 18, "Modeler une coupe courte", "€€"],
+  ["Poudre volume", "Poudre", "poudre", 17, "Donner du volume", "€"],
+  ["Shampoing délicat", "Shampoing", "bebe", 12, "Laver les cheveux de bébé", "€"],
 ]; // Keep the demo usable when browser storage is blocked or contains stale values.
 const memoryData = new Map();
 function load(key) {
@@ -81,14 +75,6 @@ function list(key, valid) {
 const validProduct = (n) => Number.isInteger(n) && !!products[n];
 let cart = list("cart", validProduct),
   fav = list("fav", validProduct);
-const profiles = [
-  "Cheveux bouclés",
-  "Cheveux lisses",
-  "Cheveux colorés",
-  "Homme",
-  "Bébé",
-  "Senior",
-];
 const productNotes = [
   [
     "Un masque pour envelopper les longueurs en manque de souplesse.",
@@ -137,7 +123,7 @@ function cards(arr) {
     arr
       .map((p) => {
         let n = products.indexOf(p);
-        return `<article class="card"><div class="photo"><img loading="lazy" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}" onclick="detail(${n})">${[0, 2].includes(n) ? '<span class="badge">Nouveauté</span>' : ""}<button aria-label="Favori : ${p[0]}" aria-pressed="${fav.includes(n)}" class="fav ${fav.includes(n) ? "on" : ""}" onclick="favorite(${n},this)">${I("heart")}</button></div><div class="info"><span class="eyebrow">${p[1].toUpperCase()}</span><h3><a href="#" onclick="detail(${n});return false">${p[0]}</a></h3><span class="muted">${price(p[3])}</span></div></article>`;
+        return `<article class="card"><div class="photo"><img loading="lazy" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}" onclick="detail(${n})">${[0, 2].includes(n) ? '<span class="badge">Nouveauté</span>' : ""}<button aria-label="Favori : ${p[0]}" aria-pressed="${fav.includes(n)}" class="fav ${fav.includes(n) ? "on" : ""}" onclick="favorite(${n},this)">${I("heart")}</button></div><div class="info"><span class="eyebrow">${p[1].toUpperCase()}</span><h3><a href="#" onclick="detail(${n});return false">${p[0]}</a></h3><span class="muted">${price(p[3])}</span><button class="add-care" onclick="cart.push(${n});save();bag()">Ajouter au panier</button></div></article>`;
       })
       .join("") || "<p>Aucun soin ne correspond à ces filtres.</p>"
   );
@@ -150,13 +136,12 @@ function favorite(n, b) {
   if (location.hash === "#favoris") render();
 }
 const head = (k, t) => `<div class="eyebrow">${k}</div><h2>${t}</h2>`,
-  banner = `<div class="promo appbanner"><span class="symbol">${I("smartphone")}</span><div>${head("NEW H’AIR MOBILE", "Votre routine à portée de main")}</div>${A("Découvrir l’application", "application", "link")}</div>`,
   select = (a, t) =>
     `<select aria-label="${t}" onchange="filter()"><option value="">${t}</option>${a.map((x) => `<option>${x}</option>`).join("")}</select>`;
 const portraits = [["hero","Les boucles libres"],["rideau","Le mouvement rideau"],["afro","Le volume naturel"]];
 function portraitMarkup(){return `<div class="portrait" role="region" aria-label="Carnet de textures"><div class="portrait-images">${portraits.map(([img,label],i)=>`<img src="assets/${img}.webp" alt="${label}" width="720" height="540" aria-hidden="${i!==0}" class="${i===0?"shown":""}">`).join("")}</div><div class="portrait-bar"><div><small>CARNET DE TEXTURES</small><strong data-caption>01 / 03 · ${portraits[0][1]}</strong></div><div class="portrait-controls"><button data-play aria-label="Mettre le diaporama en pause">Ⅱ</button><button data-next aria-label="Portrait suivant">→</button></div></div></div>`;}
 function home() {
-  return `<section class="origin-cover"><div class="origin-copy"><span class="eyebrow">NEW H’AIR &nbsp; / &nbsp; NOTRE HISTOIRE</span><h1>Quatre prénoms,<br><em>une même idée.</em></h1><p>Et si choisir un soin commençait par comprendre ses cheveux, plutôt que par remplir son panier ? C’est la question qui nous a réunis.</p><div class="byline">Pauline · Cameron · Louise · Timothée</div></div>${portraitMarkup()}</section>
+  return `<section class="origin-cover"><div class="origin-copy"><span class="eyebrow">NEW H’AIR &nbsp; / &nbsp; NOTRE HISTOIRE</span><h1>Quatre prénoms,<br><em>une même idée.</em></h1><p>Et si choisir un soin commençait par comprendre ses cheveux, plutôt que par remplir son panier ? C’est la question qui nous a réunis.</p><div class="byline">Pauline · Cameron · Louise · Timothée</div></div>${portraitMarkup()}</section><small class="imagecredit">Carnet de textures · Images générées</small>
 <section class="letter"><div>${head("LE MOT DE L’ÉQUIPE", "Pourquoi New H’air ?")}</div><div><p>Entre deux shampoings qui se ressemblent et des conseils qui se contredisent, il n’est pas toujours facile de savoir par où commencer. Nous avons créé cette mini-entreprise pour rendre ce choix plus simple.</p><p>Notre point de départ, ce sont les gestes du quotidien : démêler ses pointes, préserver une boucle ou se coiffer avant de partir. Nous voulons que chacun puisse trouver une routine adaptée à ses cheveux, à son temps et à son budget.</p></div></section>
 <section class="intentions">${head("NOTRE FEUILLE DE ROUTE", "Ce que nous voulons changer")}<div class="grid">${[
     [
@@ -169,7 +154,7 @@ function home() {
     [
       "02",
       "Choisir sans se perdre",
-      "Un catalogue lisible, avec des filtres par soin, par profil et par prix.",
+      "Un catalogue lisible, avec des filtres par soin, par usage et par prix.",
       "Parcourir les soins",
       "boutique",
     ],
@@ -190,12 +175,12 @@ function home() {
     )}</div></section><div class="team-sign"><span class="eyebrow">LES CRÉATEURS DE NEW H’AIR</span><p>Pauline, Cameron, Louise <em>&</em> Timothée</p></div>`;
 }
 function filter() {
-  let [t, p, v] = [...document.querySelectorAll("select")].map((x) => x.value);
-  catalog.innerHTML = cards(
-    products.filter(
-      (x) => (!t || x[1] === t) && (!p || x[4] === p) && (!v || x[5] === v),
-    ),
-  );
+  const fields=[...document.querySelectorAll('.filters select')];
+  const [type,use,range,order]=fields.map(el=>el.value);
+  const found=products.filter(x=>(!type||x[1]===type)&&(!use||x[4]===use)&&(!range||x[5]===range));
+  if(order)found.sort((a,b)=>order==='Prix croissant'?a[3]-b[3]:b[3]-a[3]);
+  document.getElementById('resultCount').textContent=`${found.length} soin${found.length>1?'s':''}`;
+  catalog.innerHTML=found.length?cards(found):'<div class="panel empty"><h3>Aucun soin trouvé</h3><p>Essayez un autre usage ou une gamme de prix différente.</p><button onclick="render()">Réinitialiser les filtres</button></div>';
   draw();
 }
 function pop(s) {
@@ -207,7 +192,7 @@ function pop(s) {
 function detail(n) {
   let p = products[n];
   pop(
-    `<span class="eyebrow">${p[1]}</span><h2>${p[0]}</h2><img class="detailphoto" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}"><p>${productNotes[n][0]}</p><p><strong>Pour qui ?</strong> ${p[4]}.</p><p><strong>Le geste :</strong> ${productNotes[n][1]}</p><b>${price(p[3])}</b><br><button class="cta" onclick="cart.push(${n});save();bag()">Ajouter au panier</button>`,
+    `<span class="eyebrow">${p[1]}</span><h2>${p[0]}</h2><img class="detailphoto" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}"><p>${productNotes[n][0]}</p><p><strong>Pour quel usage ?</strong> ${p[4]}.</p><p><strong>Le geste :</strong> ${productNotes[n][1]}</p><b>${price(p[3])}</b><br><button class="cta" onclick="cart.push(${n});save();bag()">Ajouter au panier</button>`,
   );
 }
 function save() {
@@ -243,35 +228,24 @@ function findPosition() {
 function render() {
   let n = Math.max(0, ids.indexOf(location.hash.slice(1)));
   if (modal.open) modal.close();
-  crumb.textContent = pages[n];
   document.title = pages[n] + " · New H’air";
   nav.innerHTML = pages
     .map((p, i) =>
-      [5, 6].includes(i)
-        ? ""
-        : `<a ${i === n ? 'aria-current="page"' : ""} class="${i === n ? "active" : ""}" href="#${ids[i]}">${I(ico[i])}${p}</a>`,
+      `<a ${i === n ? 'aria-current="page"' : ""} class="${i === n ? "active" : ""}" href="#${ids[i]}">${I(ico[i])}${p}</a>`,
     )
     .join("");
   content.innerHTML = [
     home,
     () =>
-      head("NOS SOINS", "La boutique") +
-      `<div class="filters">${select([...new Set(products.map((x) => x[1]))], "Types de soins")}${select(profiles, "Tous les profils")}${select(["€", "€€", "€€€"], "Tous les prix")}</div><div class="grid" id="catalog">${cards(products)}</div>`,
+      "<h2>La boutique</h2>" +
+      `<div class="filters">${select([...new Set(products.map((x) => x[1]))], "Types de soins")}${select(products.map(x=>x[4]), "Tous les usages")}${select(["€", "€€", "€€€"], "Tous les prix")}${select(["Prix croissant","Prix décroissant"],"Trier par prix")}</div><p id="resultCount" aria-live="polite">${products.length} soins</p><div class="grid" id="catalog">${cards(products)}</div>`,
     () =>
-      head("CONSEIL PERSONNALISÉ", "Mon diagnostic") +
+      "<h2>Mon diagnostic</h2>" +
       '<div class="panel" id="quiz"></div>',
     () =>
       head("AUTOUR DE VOUS", "Coiffeurs spécialisés") +
       `<div class="panel"><iframe title="Carte des environs" id="map"></iframe><button class="cta" onclick="findPosition()">Me localiser</button><p id="msg">Carte centrée sur Lyon. Découvrez les <a href="https://www.google.com/maps/search/coiffeur+spécialisé+cheveux+bouclés+Lyon" target="_blank" rel="noopener">salons pour cheveux bouclés à Lyon ↗</a>.</p></div>`,
     styleGallery,
-    () =>
-      head("COLLABORATIONS", "Espace partenaires") +
-      '<div class="panel"><span class="eyebrow">ESPACE PUBLICITAIRE</span><h2>À la rencontre des professionnels</h2><p>Cet espace est réservé aux futures collaborations avec les salons et les marques de soins capillaires.</p></div>',
-    () =>
-      head("FOR YOUR HAIR", "L’application New H’air") +
-      '<div class="panel"><span class="eyebrow">BIENTÔT DISPONIBLE</span><h2>Vos soins vous suivent partout.</h2><p>L’application mobile sera prochainement disponible au téléchargement. En attendant, découvrez votre routine sur le site.</p>' +
-      A("Découvrir ma routine", "diagnostic") +
-      "</div>",
     () =>
       head("MON CARNET", "Mes favoris") +
       (fav.length
@@ -284,11 +258,7 @@ function render() {
   window.scrollTo(0, 0);
   content.dispatchEvent(new Event("nh:page"));
 }
-window.onhashchange = () => {
-  render();
-  if (crumb.animate && matchMedia('(prefers-reduced-motion: no-preference)').matches)
-    crumb.animate([{opacity:.3,transform:'translateX(10px)'},{opacity:1,transform:'none'}],{duration:280,easing:'ease-out'});
-};
+window.onhashchange = render;
 save();
 
 const styles = [
