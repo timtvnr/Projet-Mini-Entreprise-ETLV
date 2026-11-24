@@ -44,3 +44,41 @@
   reset();
   preference.addEventListener?.('change',reset);
 })();
+
+// Real, persistent frame states: the dissolve does not depend on catching a
+// one-off entry animation. Pause outside the viewport and between routes.
+(() => {
+  const root = document.getElementById('content');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  let cleanup = () => {};
+  function mount() {
+    cleanup();
+    const panel = root.querySelector('.portrait');
+    if (!panel) return;
+    const slides = [...panel.querySelectorAll('img')];
+    const play = panel.querySelector('[data-play]');
+    let index = 0, playing = !reduced.matches, visible = true, timer;
+    function schedule() {
+      clearTimeout(timer);
+      play.textContent = playing ? 'Ⅱ' : '▶';
+      play.setAttribute('aria-label',playing?'Mettre le diaporama en pause':'Lire le diaporama');
+      if (playing && visible && !document.hidden) timer=setTimeout(next,4200);
+    }
+    function next() {
+      index=(index+1)%slides.length;
+      slides.forEach((img,i)=>{img.classList.toggle('shown',i===index);img.setAttribute('aria-hidden',String(i!==index));});
+      panel.querySelector('[data-caption]').textContent=`0${index+1} / 03 · ${slides[index].alt}`;
+      schedule();
+    }
+    play.onclick=()=>{playing=!playing;if(playing)next();else schedule();};
+    panel.querySelector('[data-next]').onclick=()=>{playing=false;next();};
+    const onPreference=()=>{playing=!reduced.matches;schedule();};
+    const visibility = window.IntersectionObserver && new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;schedule();});
+    visibility?.observe(panel);
+    document.addEventListener('visibilitychange',schedule);
+    reduced.addEventListener?.('change',onPreference);
+    schedule();
+    cleanup=()=>{clearTimeout(timer);visibility?.disconnect();document.removeEventListener('visibilitychange',schedule);reduced.removeEventListener?.('change',onPreference);};
+  }
+  root.addEventListener('nh:page', mount);mount();
+})();

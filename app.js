@@ -153,8 +153,10 @@ const head = (k, t) => `<div class="eyebrow">${k}</div><h2>${t}</h2>`,
   banner = `<div class="promo appbanner"><span class="symbol">${I("smartphone")}</span><div>${head("NEW H’AIR MOBILE", "Votre routine à portée de main")}</div>${A("Découvrir l’application", "application", "link")}</div>`,
   select = (a, t) =>
     `<select aria-label="${t}" onchange="filter()"><option value="">${t}</option>${a.map((x) => `<option>${x}</option>`).join("")}</select>`;
+const portraits = [["hero","Les boucles libres"],["rideau","Le mouvement rideau"],["afro","Le volume naturel"]];
+function portraitMarkup(){return `<div class="portrait" role="region" aria-label="Carnet de textures"><div class="portrait-images">${portraits.map(([img,label],i)=>`<img src="assets/${img}.webp" alt="${label}" width="720" height="540" aria-hidden="${i!==0}" class="${i===0?"shown":""}">`).join("")}</div><div class="portrait-bar"><div><small>CARNET DE TEXTURES</small><strong data-caption>01 / 03 · ${portraits[0][1]}</strong></div><div class="portrait-controls"><button data-play aria-label="Mettre le diaporama en pause">Ⅱ</button><button data-next aria-label="Portrait suivant">→</button></div></div></div>`;}
 function home() {
-  return `<section class="origin-cover"><div class="origin-copy"><span class="eyebrow">NEW H’AIR &nbsp; / &nbsp; NOTRE HISTOIRE</span><h1>Quatre prénoms,<br><em>une même idée.</em></h1><p>Et si choisir un soin commençait par comprendre ses cheveux, plutôt que par remplir son panier ? C’est la question qui nous a réunis.</p><div class="byline">Pauline · Cameron · Louise · Timothée</div></div><div class="origin-image"><span>FOR YOUR HAIR &nbsp; / &nbsp; NEW H’AIR</span></div></section>
+  return `<section class="origin-cover"><div class="origin-copy"><span class="eyebrow">NEW H’AIR &nbsp; / &nbsp; NOTRE HISTOIRE</span><h1>Quatre prénoms,<br><em>une même idée.</em></h1><p>Et si choisir un soin commençait par comprendre ses cheveux, plutôt que par remplir son panier ? C’est la question qui nous a réunis.</p><div class="byline">Pauline · Cameron · Louise · Timothée</div></div>${portraitMarkup()}</section>
 <section class="letter"><div>${head("LE MOT DE L’ÉQUIPE", "Pourquoi New H’air ?")}</div><div><p>Entre deux shampoings qui se ressemblent et des conseils qui se contredisent, il n’est pas toujours facile de savoir par où commencer. Nous avons créé cette mini-entreprise pour rendre ce choix plus simple.</p><p>Notre point de départ, ce sont les gestes du quotidien : démêler ses pointes, préserver une boucle ou se coiffer avant de partir. Nous voulons que chacun puisse trouver une routine adaptée à ses cheveux, à son temps et à son budget.</p></div></section>
 <section class="intentions">${head("NOTRE FEUILLE DE ROUTE", "Ce que nous voulons changer")}<div class="grid">${[
     [
@@ -280,6 +282,7 @@ function render() {
   if (n === 3) locate(45.76, 4.835);
   draw();
   window.scrollTo(0, 0);
+  content.dispatchEvent(new Event("nh:page"));
 }
 window.onhashchange = () => {
   render();

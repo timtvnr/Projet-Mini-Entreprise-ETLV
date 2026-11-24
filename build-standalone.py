@@ -8,7 +8,8 @@ assets={p.name:uri(p,'image/webp') for p in Path('assets').glob('*.webp')}
 assets['source-sans.woff2']=uri(Path('assets/source-sans.woff2'),'font/woff2')
 def inline(text):
     return re.sub(r'(?<!/)assets/([\w-]+\.(?:webp|woff2))',lambda m:assets[m[1]],text)
-html=inline(Path('index.html').read_text()).replace('<link rel="stylesheet" href="style.css">','<style>'+inline(Path('style.css').read_text())+'</style>')
+source=re.sub(r'(style\.css|app\.js|motion\.js)\?v=[\w-]+', r'\1', Path('index.html').read_text())
+html=inline(source).replace('<link rel="stylesheet" href="style.css">','<style>'+inline(Path('style.css').read_text())+'</style>')
 for name in ['icons','app','studio','knowledge','concierge','motion']:
     js=Path(name+'.js').read_text()
     if name=='app':
