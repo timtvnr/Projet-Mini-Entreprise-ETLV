@@ -2443,22 +2443,252 @@ const helpTopics = [
       .filter((x) => !stop.has(x))
       .map((x) => x.replace(/s$/, ""));
   const index = docs.map((d) => words(d[0]));
-  function reply(text) {
-    const polite = text
+  // Session-only context: resolve « il coûte combien ? » without storing messages.
+  let lastProduct = null,
+    pending = null;
+  function normalize(text) {
+    return text
       .toLowerCase()
-      .trim()
-      .replace(/[!?.…]+$/g, "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/œ/g, "oe")
+      .replace(/[’'-]/g, " ")
+      .replace(
+        /\b(?:shampoo?ing|shampoin|shampouin|shampoin[gq]s?)\b/g,
+        "shampoing",
+      )
+      .replace(/\b(?:cheuveux|cheveuxx|cheveuxs)\b/g, "cheveux")
+      .replace(/\b(?:combient|cmb)\b/g, "combien")
+      .replace(/\b(?:masqe|mask)\b/g, "masque")
+      .replace(/\b(?:bjr|slt|cc)\b/g, "salut")
+      .replace(/[^a-z0-9€,\. ]+/g, " ")
+      .replace(/\s+/g, " ")
       .trim();
-    if (/^(bonjour|salut|bonsoir|coucou)( à vous)?$/.test(polite))
+  }
+  const intentOf = (q) =>
+    /combien de temps|temps de pose/.test(q)
+      ? "use"
+      : /prix|tarif|coute|combien|cher|vaut/.test(q)
+        ? "price"
+        : /utilis|appliqu|mettre|emploi|mode d|quand|comment (on |je )?(le |la |l )?(met|fait|utilis)|sert|rinc/.test(
+              q,
+            )
+          ? "use"
+          : /pour qui|convient|quel profil/.test(q)
+            ? "profile"
+            : null;
+  function productAnswer(i, intent) {
+    lastProduct = i;
+    pending = null;
+    const [name, , , cost, profile] = products[i];
+    return [
+      intent === "use"
+        ? `${name} : ${productNotes[i][1]}`
+        : intent === "profile"
+          ? `${name} figure dans la sélection « ${profile} ». ${productNotes[i][0]}`
+          : intent === "price"
+            ? `${name} coûte ${price(cost)}.`
+            : `${name} : ${productNotes[i][0]} Son prix est de ${price(cost)}.`,
+      "boutique",
+    ];
+  }
+  function direct(text) {
+    const q = normalize(text).replace(/[.,]+$/, "");
+    const faq = (i, product = null) => {
+      pending = null;
+      lastProduct = product;
+      return helpTopics[i].slice(1);
+    };
+    if (
+      /\b(allerg|ingredient|composition|inci|parfum|sulfate|silicone|vegan|bio\b)/.test(
+        q,
+      )
+    )
+      return faq(11);
+    if (
+      /\b(plaie|eczema|douleur|chute|demange|pelade|perds mes cheveux)/.test(q)
+    )
+      return faq(12);
+    if (
+      /^(salut|bonjour|hello|bonsoir|coucou|hey)( (toi|a vous|ca va))*$/.test(
+        q,
+      ) ||
+      /^ca va$/.test(q)
+    )
       return [
-        "Bonjour ! Cherchez-vous un soin, une idée de coupe ou de l’aide pour le panier ?",
+        "Bonjour ! Vous pouvez me demander un prix, un geste de soin ou comment utiliser la boutique.",
         null,
       ];
-    if (/^(merci( beaucoup)?|super merci)$/.test(polite))
+    if (
+      /^(merci|cool merci|super merci|merci beaucoup|merci bien|merci a toi)$/.test(
+        q,
+      )
+    )
+      return ["Avec plaisir !", null];
+    if (
+      /qui (a |vous a )?(cree|creer|fait|fonde)|qui etes vous|qui se cache|c est quoi new h|qu est ce que new h/.test(
+        q,
+      )
+    )
+      return faq(0);
+    if (
+      /\b(aide|aider)\b|que (peux|sais) tu faire/.test(q) &&
+      q.split(" ").length < 9
+    )
       return [
-        "Avec plaisir ! Je reste là si vous avez une autre question beauté.",
+        "Je peux comparer les prix, expliquer comment appliquer un soin ou vous guider dans le diagnostic. Par exemple : « Quel soin à moins de 20 € ? »",
         null,
       ];
+    if (/favori|petit coeur/.test(q))
+      return [
+        "Touchez le cœur sur une fiche produit. Retrouvez ensuite votre sélection dans « Mes favoris » sur ce navigateur.",
+        "favoris",
+      ];
+    if (/panier/.test(q) && !/payer|paiement/.test(q))
+      return [
+        `Votre panier contient ${cart.length} article(s), pour ${price(total())}. Ouvrez « Mon panier » pour changer une quantité. Pour ajouter un soin, ouvrez sa fiche dans la boutique.`,
+        "boutique",
+      ];
+    if (/livr|expedi|colis|delai|rembours|payer|paiement|paye/.test(q))
+      return faq(8);
+    if (/connect|inscri|mot de passe|historique|mon compte/.test(q))
+      return faq(9);
+    if (/diagnostic|questionnaire|test capillaire/.test(q)) {
+      if (/prix|payant|gratuit|coute/.test(q))
+        return [
+          "Le diagnostic est gratuit : vous pouvez répondre aux questions sans payer ni créer de compte.",
+          "diagnostic",
+        ];
+      return faq(1);
+    }
+    if (/est ce (un |une )?(vrai|vraie)|vraiment debite|carte bancaire/.test(q))
+      return faq(8);
+    if (/horaires?|ouvert|adresse du magasin/.test(q))
+      return [
+        "New H’air est un site de démonstration. Je n’ai pas de boutique physique ni d’horaires confirmés à vous indiquer.",
+        "accueil",
+      ];
+    if (/combien de (produits|soins)|nombre de produits/.test(q))
+      return [
+        `La boutique présente ${products.length} soins, du shampoing aux produits coiffants.`,
+        "boutique",
+      ];
+    if (/combien de questions/.test(q)) return faq(1);
+    const amount =
+      q.match(
+        /(?:moins de|sous|jusqu a|budget(?: de)?|maximum(?: de)?|max(?: de)?)\s*(\d+(?:[.,]\d+)?)/,
+      ) ||
+      q.match(/(\d+(?:[.,]\d+)?)\s*(?:€|euros?)\s*(?:max|maximum|de budget)/);
+    if (amount || /moins cher|petit prix|pas cher/.test(q)) {
+      const sorted = products.slice().sort((a, b) => a[3] - b[3]);
+      const limit = amount ? Number(amount[1].replace(",", ".")) : sorted[0][3];
+      const matches = sorted.filter((p) =>
+        /moins de|sous /.test(q) ? p[3] < limit : p[3] <= limit,
+      );
+      return [
+        matches.length
+          ? matches
+              .map((p) => `${p[0]} : ${price(p[3])} (${p[4]})`)
+              .join(" ; ") + "."
+          : "Aucun soin du catalogue ne correspond à ce budget. Le premier prix est " +
+            price(sorted[0][3]) +
+            ".",
+        "boutique",
+      ];
+    }
+    const intent = intentOf(q);
+    let candidates = products.map((p, i) => ({
+      i,
+      name: normalize(p[0]),
+      type: normalize(p[1]),
+    }));
+    const contains = (s) => (" " + q + " ").includes(" " + s + " ");
+    let hit = candidates.find((p) => contains(p.name));
+    if (!hit) {
+      const matches = candidates
+        .filter((p) => contains(p.type))
+        .sort((a, b) => b.type.length - a.type.length);
+      if (matches.length) {
+        const same = matches.filter((x) => x.type === matches[0].type);
+        if (same.length > 1) {
+          const chosen = same.find(
+            (x) =>
+              contains(normalize(products[x.i][0]).split(" ").pop()) ||
+              contains(normalize(products[x.i][4])),
+          );
+          if (chosen) hit = chosen;
+          else {
+            pending = { ids: same.map((x) => x.i), intent: intent || "info" };
+            lastProduct = null;
+            return [
+              "Lequel vous intéresse : " +
+                same.map((x) => products[x.i][0]).join(" ou ") +
+                " ?",
+              "boutique",
+            ];
+          }
+        } else hit = matches[0];
+      }
+    }
+    if (!hit && pending?.ids) {
+      const i = pending.ids.find(
+        (i) =>
+          contains(normalize(products[i][0]).split(" ").pop()) ||
+          contains(normalize(products[i][4])),
+      );
+      if (i !== undefined) hit = candidates[i];
+    }
+    if (hit) return productAnswer(hit.i, intent || pending?.intent || "info");
+    if (
+      intent &&
+      lastProduct !== null &&
+      /^(et |il |elle |son |ca |comment |combien |pour qui|a quoi|le prix|quel est son)/.test(
+        q,
+      )
+    )
+      return productAnswer(lastProduct, intent);
+    if (
+      intent &&
+      /prix|tarif|ca coute combien|combien ca coute|combien coute/.test(q)
+    ) {
+      pending = { intent };
+      lastProduct = null;
+      return [
+        "De quel soin souhaitez-vous connaître le prix ? Par exemple : masque nutritif, huile sublime ou gel définition.",
+        "boutique",
+      ];
+    }
+    if (/vendez|vos produits|catalogue|proposez|quoi acheter/.test(q))
+      return [
+        "Notre catalogue comprend " +
+          products.map((p) => p[0]).join(", ") +
+          ". De quel soin voulez-vous parler ?",
+        "boutique",
+      ];
+    if (/\b(secs?|seches?|abimes?|cassants?|deshydrates?)\b/.test(q)) {
+      lastProduct = 0;
+      return [
+        helpTopics[2][1] + " Une piste du catalogue : le Masque nutritif.",
+        "diagnostic",
+      ];
+    }
+    if (/\b(gras|grasses?|regraiss\w*)\b/.test(q)) return faq(3);
+    if (/boucl|frisott|ondule/.test(q)) {
+      return faq(4, 4);
+    }
+    if (/\b(fins?|plats?|volume)\b/.test(q)) return faq(5);
+    if (/conseill|recommand|quel soin|mes cheveux|besoin d aide/.test(q))
+      return [
+        "Pour vous orienter, quel est votre besoin principal : des pointes sèches, des racines grasses, du volume ou des boucles mieux définies ? Vous pouvez aussi faire le diagnostic complet.",
+        "diagnostic",
+      ];
+    return null;
+  }
+  function reply(text) {
+    const handled = direct(text);
+    if (handled) return handled;
+    pending = null;
+    lastProduct = null;
     const query = words(text);
     let best = -1,
       score = 0;
