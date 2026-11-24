@@ -282,3 +282,22 @@ function styleGallery() {
     '</div><p class="guideintro">Pour aller plus loin : quelle frange selon la forme du visage ? [<a href="https://www.franckprovost-expert.com/le-mag-expert/coiffure/quelle-frange-selon-la-forme-de-mon-visage_a1086">2</a>]</p>'
   );
 }
+
+// A disclosure menu avoids horizontal navigation on handheld screens.
+const mobileMenuButton = document.getElementById('mobileMenu');
+function setMobileMenu(open) { mobileMenuButton.setAttribute('aria-expanded', String(open)); }
+mobileMenuButton.addEventListener('click', () => setMobileMenu(mobileMenuButton.getAttribute('aria-expanded') === 'false'));
+document.querySelector('aside').addEventListener('click', event => { if (event.target.closest('a')) setMobileMenu(false); });
+window.addEventListener('hashchange', () => setMobileMenu(false));
+document.addEventListener('keydown', event => { if(event.key === 'Escape' && mobileMenuButton.offsetWidth && mobileMenuButton.getAttribute('aria-expanded') === 'true'){ setMobileMenu(false); mobileMenuButton.focus(); } });
+// Soft keyboards can resize only the visual viewport, notably in Safari.
+if (window.visualViewport) {
+  function syncViewport() {
+    const view = window.visualViewport;
+    document.documentElement.style.setProperty('--visible-height', `${view.height}px`);
+    document.documentElement.style.setProperty('--keyboard-gap', `${Math.max(0, window.innerHeight-view.height-view.offsetTop)}px`);
+  }
+  visualViewport.addEventListener('resize', syncViewport);
+  visualViewport.addEventListener('scroll', syncViewport);
+  syncViewport();
+}
