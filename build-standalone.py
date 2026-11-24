@@ -8,7 +8,7 @@ assets = {p.name: 'data:image/jpeg;base64,' + base64.b64encode(p.read_bytes()).d
 def inline(text):
     return re.sub(r'assets/([\w-]+\.jpe?g)', lambda m: assets[m[1]], text)
 html = inline(Path('index.html').read_text()).replace('<link rel="stylesheet" href="style.css">', '<style>'+inline(Path('style.css').read_text())+'</style>')
-for name in ['icons', 'app', 'studio']:
+for name in ['icons', 'app', 'studio', 'knowledge', 'concierge']:
     js = Path(name+'.js').read_text()
     if name == 'app':
         js = 'const photos='+json.dumps(assets)+';\n'+re.sub(r'assets/\$\{([^}]+)\}\.jpg', r"${photos[\1+'.jpg']}", js)
