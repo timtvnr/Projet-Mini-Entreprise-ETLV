@@ -72,7 +72,7 @@
     function next() {
       index=(index+1)%slides.length;
       slides.forEach((img,i)=>{img.classList.toggle('shown',i===index);img.setAttribute('aria-hidden',String(i!==index));});
-      panel.querySelector('[data-caption]').textContent=`0${index+1} / 03 · ${slides[index].alt}`;
+      panel.querySelector('[data-caption]').textContent=`0${index+1} / ${String(slides.length).padStart(2,"0")} · ${slides[index].alt}`;
       schedule();
     }
     play.onclick=()=>{playing=!playing;if(playing)next();else schedule();};

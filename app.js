@@ -48,7 +48,14 @@ const products = [
   ["Brume de réveil", "Brume", "brume", 15, "Rafraîchir entre deux lavages", "€"],
   ["Lait de coiffage", "Lait sans rinçage", "lait", 22, "Préparer les longueurs au coiffage", "€€"],
   ["Shampoing solide nomade", "Shampoing", "solide", 13, "Laver en déplacement", "€"],
-]; // Keep the demo usable when browser storage is blocked or contains stale values.
+  ["Pâte souple", "Pâte", "pate", 18, "Texturiser sans figer", "€€"],
+  ["Mousse aérienne", "Mousse", "mousse", 20, "Soutenir le mouvement", "€€"],
+  ["Démêlant junior", "Démêlant", "demelant", 15, "Accompagner le démêlage", "€"],
+];
+const ageGroups=["Bébé","Enfant","Ado","Adulte","Senior"];
+function productAges(p){if(p[2]==='bebe')return ['Bébé'];if(p[2]==='demelant')return ['Enfant'];if(p[2]==='shampoing')return ageGroups.slice(1);return ageGroups.slice(2)}
+function audienceLabel(p){return productAges(p).join(' · ')}
+// Keep the demo usable when browser storage is blocked or contains stale values.
 const memoryData = new Map();
 function load(key) {
   if (memoryData.has(key)) return memoryData.get(key);
@@ -114,9 +121,15 @@ const productNotes = [
   ["Une brume légère pour retravailler quelques mèches le matin, sans remouiller toute la chevelure.", "Vaporisez dans les mains, pressez les mèches à remettre en forme puis laissez sécher."],
   ["Un lait fluide à répartir sur les longueurs humides pour les préparer au coiffage sans passer par une étape de rinçage.", "Étalez une petite quantité entre les paumes, puis répartissez des mi-longueurs vers les pointes avant de coiffer."],
   ["Un pain lavant compact à glisser dans une boîte pour emporter son geste de lavage en déplacement.", "Faites mousser le pain dans les mains mouillées. Massez les racines avec la mousse, rincez puis laissez sécher le pain hors de sa boîte."],
+  ["Une pâte souple pour dessiner quelques mèches, sur une coupe courte ou un dégradé, sans imposer de coiffure genrée.","Frottez une petite touche entre les paumes et pincez les mèches sèches du bout des doigts."],
+  ["Une mousse pour donner du mouvement aux cheveux fins, poivre et sel, colorés ou naturels.","Répartissez la mousse dans les mains puis sur les longueurs humides, en soulevant les racines."],
+  ["Un lait démêlant de la gamme enfant pour accompagner le passage du peigne après le lavage.","Un adulte répartit le soin sur les longueurs humides, démêle des pointes vers les racines puis rince selon la notice."],
 ];
 // Formats et textures illustrent les références fictives de la mini-entreprise.
 const careGuides = {
+  pate:["60 g","Pâte souple","En finition","Commencez par une mèche pour ajuster la quantité au relief souhaité."],
+  mousse:["150 ml","Mousse légère","Avant le séchage","Évitez de charger les pointes : répartissez d’abord une petite quantité."],
+  demelant:["180 ml","Lait à rincer","Après le lavage","Utilisez un peigne à dents larges sans tirer. Vérifiez l’âge d’utilisation sur la notice du produit réel."],
   masque: ["200 ml", "Crème enveloppante", "Après le shampoing", "Pour garder du volume, réservez le masque aux longueurs plutôt qu’aux racines."],
   shampoing: ["250 ml", "Gel lavant", "Au lavage", "Mouillez bien la chevelure avant de répartir le shampoing : inutile de frotter les pointes."],
   huile: ["30 ml", "Huile fluide", "En finition", "Commencez par une seule goutte : il est plus facile d’en ajouter que d’en retirer."],
@@ -143,7 +156,7 @@ function cards(arr) {
     arr
       .map((p) => {
         let n = products.indexOf(p);
-        return `<article class="card"><div class="photo"><img loading="lazy" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}" onclick="detail(${n})">${n >= 8 ? '<span class="badge">Nouveauté</span>' : ""}<button aria-label="Favori : ${p[0]}" aria-pressed="${fav.includes(n)}" class="fav ${fav.includes(n) ? "on" : ""}" onclick="favorite(${n},this)">${I("heart")}</button></div><div class="info"><span class="eyebrow">${p[1].toUpperCase()}</span><h3><a href="#" onclick="detail(${n});return false">${p[0]}</a></h3><p class="product-purpose">${p[4]}</p><div class="product-meta"><span>${careGuides[p[2]][0]}</span><strong>${price(p[3])}</strong></div><button class="add-care" onclick="cart.push(${n});save();bag()">Ajouter au panier</button></div></article>`;
+        return `<article class="card"><div class="photo"><img loading="lazy" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}" onclick="detail(${n})">${n >= 11 ? '<span class="badge">Nouveauté</span>' : ""}<button aria-label="Favori : ${p[0]}" aria-pressed="${fav.includes(n)}" class="fav ${fav.includes(n) ? "on" : ""}" onclick="favorite(${n},this)">${I("heart")}</button></div><div class="info"><span class="eyebrow">${p[1].toUpperCase()}</span><h3><a href="#" onclick="detail(${n});return false">${p[0]}</a></h3><small class="audience-tag">${audienceLabel(p)}</small><p class="product-purpose">${p[4]}</p><div class="product-meta"><span>${careGuides[p[2]][0]}</span><strong>${price(p[3])}</strong></div><button class="add-care" onclick="cart.push(${n});save();bag()">Ajouter au panier</button></div></article>`;
       })
       .join("") || "<p>Aucun soin ne correspond à ces filtres.</p>"
   );
@@ -158,8 +171,8 @@ function favorite(n, b) {
 const head = (k, t) => `<div class="eyebrow">${k}</div><h2>${t}</h2>`,
   select = (a, t) =>
     `<select aria-label="${t}" onchange="filter()"><option value="">${t}</option>${a.map((x) => `<option>${x}</option>`).join("")}</select>`;
-const portraits = [["hero","Les boucles libres"],["rideau","Le mouvement rideau"],["afro","Le volume naturel"]];
-function portraitMarkup(){return `<div class="portrait" role="region" aria-label="Carnet de textures"><div class="portrait-images">${portraits.map(([img,label],i)=>`<img src="assets/${img}.webp" alt="${label}" width="720" height="540" aria-hidden="${i!==0}" class="${i===0?"shown":""}">`).join("")}</div><div class="portrait-bar"><div><small>CARNET DE TEXTURES</small><strong data-caption>01 / 03 · ${portraits[0][1]}</strong></div><div class="portrait-controls"><button data-play aria-label="Mettre le diaporama en pause">Ⅱ</button><button data-next aria-label="Portrait suivant">→</button></div></div></div>`;}
+const portraits = [["hero","Les boucles libres"],["pate","Le court texturé"],["mousse","Le volume argenté"],["demelant","Le geste en famille"],["afro","Le volume naturel"]];
+function portraitMarkup(){return `<div class="portrait" role="region" aria-label="Carnet de textures"><div class="portrait-images">${portraits.map(([img,label],i)=>`<img src="assets/${img}.webp" alt="${label}" width="720" height="540" aria-hidden="${i!==0}" class="${i===0?"shown":""}">`).join("")}</div><div class="portrait-bar"><div><small>CARNET DE TEXTURES</small><strong data-caption>01 / ${String(portraits.length).padStart(2,"0")} · ${portraits[0][1]}</strong></div><div class="portrait-controls"><button data-play aria-label="Mettre le diaporama en pause">Ⅱ</button><button data-next aria-label="Portrait suivant">→</button></div></div></div>`;}
 function home() {
   return `<section class="origin-cover"><div class="origin-copy"><span class="eyebrow">NEW H’AIR &nbsp; / &nbsp; NOTRE HISTOIRE</span><h1>Quatre prénoms,<br><em>une même idée.</em></h1><p>Et si choisir un soin commençait par comprendre ses cheveux, plutôt que par remplir son panier ? C’est la question qui nous a réunis.</p><div class="byline">Pauline · Cameron · Louise · Timothée</div></div>${portraitMarkup()}</section><small class="imagecredit">Carnet de textures · Images générées</small>
 <section class="letter"><div>${head("LE MOT DE L’ÉQUIPE", "Pourquoi New H’air ?")}</div><div><p>Entre deux shampoings qui se ressemblent et des conseils qui se contredisent, il n’est pas toujours facile de savoir par où commencer. Nous avons créé cette mini-entreprise pour rendre ce choix plus simple.</p><p>Notre point de départ, ce sont les gestes du quotidien : démêler ses pointes, préserver une boucle ou se coiffer avant de partir. Femmes, hommes, jeunes, seniors et familles avec enfants ou bébés : nous voulons que chacun puisse trouver une routine adaptée à ses cheveux, à son temps et à son budget.</p></div></section>
@@ -196,8 +209,8 @@ function home() {
 }
 function filter() {
   const fields=[...document.querySelectorAll('.filters select')];
-  const [type,use,range,order]=fields.map(el=>el.value);
-  const found=products.filter(x=>(!type||x[1]===type)&&(!use||x[4]===use)&&(!range||x[5]===range));
+  const [type,use,range,order,age]=fields.map(el=>el.value);
+  const found=products.filter(x=>(!type||x[1]===type)&&(!use||x[4]===use)&&(!range||x[5]===range)&&(!age||productAges(x).includes(age)));
   if(order)found.sort((a,b)=>order==='Prix croissant'?a[3]-b[3]:b[3]-a[3]);
   document.getElementById('resultCount').textContent=`${found.length} soin${found.length>1?'s':''}`;
   catalog.innerHTML=found.length?cards(found):'<div class="panel empty"><h3>Aucun soin trouvé</h3><p>Essayez un autre usage ou une gamme de prix différente.</p><button onclick="render()">Réinitialiser les filtres</button></div>';
@@ -213,7 +226,7 @@ function detail(n) {
   let p = products[n];
   const [format,texture,moment,tip]=careGuides[p[2]];
   pop(
-    `<span class="eyebrow">${p[1]}</span><h2>${p[0]}</h2><img class="detailphoto" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}"><dl class="care-specs"><div><dt>Format</dt><dd>${format}</dd></div><div><dt>Texture</dt><dd>${texture}</dd></div><div><dt>Dans la routine</dt><dd>${moment}</dd></div></dl><p>${productNotes[n][0]}</p><p><strong>Pour quel usage ?</strong> ${p[4]}.</p><p><strong>Le geste :</strong> ${productNotes[n][1]}</p><div class="care-tip"><strong>Le conseil pratique</strong><p>${tip}</p></div><small class="demo-note">Produit de démonstration · Format illustratif</small><b>${price(p[3])}</b><br><button class="cta" onclick="cart.push(${n});save();bag()">Ajouter au panier</button>${salonSuggestions(n)}`,
+    `<span class="eyebrow">${p[1]}</span><h2>${p[0]}</h2><img class="detailphoto" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}"><dl class="care-specs"><div><dt>Format</dt><dd>${format}</dd></div><div><dt>Texture</dt><dd>${texture}</dd></div><div><dt>Dans la routine</dt><dd>${moment}</dd></div></dl><p>${productNotes[n][0]}</p><p><strong>Rayon :</strong> ${audienceLabel(p)} · Collection sans distinction de genre.</p><p><strong>Pour quel usage ?</strong> ${p[4]}.</p><p><strong>Le geste :</strong> ${productNotes[n][1]}</p><div class="care-tip"><strong>Le conseil pratique</strong><p>${tip}</p></div><small class="demo-note">Produit de démonstration · Format illustratif</small><b>${price(p[3])}</b><br><button class="cta" onclick="cart.push(${n});save();bag()">Ajouter au panier</button>${salonSuggestions(n)}`,
   );
 }
 function save() {
@@ -259,7 +272,7 @@ function render() {
     home,
     () =>
       "<h2>La boutique</h2>" +
-      `<div class="filters">${select([...new Set(products.map((x) => x[1]))], "Types de soins")}${select(products.map(x=>x[4]), "Tous les usages")}${select(["€", "€€", "€€€"], "Tous les prix")}${select(["Prix croissant","Prix décroissant"],"Trier par prix")}</div><p id="resultCount" aria-live="polite">${products.length} soins</p><div class="grid" id="catalog">${cards(products)}</div>`,
+      `<section class="everyday"><div><span class="eyebrow">COLLECTION MIXTE · NEW H’AIR</span><h3>Les gestes n’ont pas de genre.</h3><p>Femmes, hommes, ados, seniors : choisissez selon la texture et le geste recherché. Pour les plus petits, découvrez les références bébé et junior.</p></div><div class="everyday-photos">${[['pate','Texturiser'],['mousse','Mettre en volume'],['demelant','Démêler en famille']].map(([img,label])=>`<figure><img src="assets/${img}.webp" width="440" height="330" alt="${label}"><figcaption>${label}</figcaption></figure>`).join('')}</div></section><div class="filters">${select([...new Set(products.map((x) => x[1]))], "Types de soins")}${select(products.map(x=>x[4]), "Tous les usages")}${select(["€", "€€", "€€€"], "Tous les prix")}${select(["Prix croissant","Prix décroissant"],"Trier par prix")}${select(ageGroups,"Tous les âges")}</div><p id="resultCount" aria-live="polite">${products.length} soins</p><div class="grid" id="catalog">${cards(products)}</div>`,
     () =>
       "<h2>Mon diagnostic</h2>" +
       '<div class="panel" id="quiz"></div>',
@@ -325,6 +338,9 @@ const styles = [
     "Discutez de la hauteur et du volume à conserver sur les côtés.",
     "coupe afro naturelle",
   ],
+  ["Le court texturé","pate","Des mèches courtes modelées au doigt pour faire ressortir leur mouvement.","Indiquez la longueur à garder sur le dessus pour pouvoir la recoiffer.","coupe courte texturée"],
+  ["Le court argenté","mousse","Une nuque courte et un dessus souple qui laisse vivre les nuances argentées.","Montrez où vous aimez conserver de la hauteur.","coupe courte volume"],
+  ["La longueur junior","demelant","Une longueur facile à attacher et à démêler avec un adulte.","Discutez ensemble de la longueur qui convient à l’enfant et de ses habitudes.","coupe enfant"],
 ];
 function styleGallery() {
   return (
