@@ -5,6 +5,7 @@ const pages = [
     "Coiffeurs spécialisés",
     "Photo inspi",
     "Mes favoris",
+    "Réseaux sociaux",
   ],
   ids = [
     "accueil",
@@ -13,6 +14,7 @@ const pages = [
     "coiffeurs",
     "inspiration",
     "favoris",
+    "reseaux",
   ],
   ico = [
     "house",
@@ -21,6 +23,7 @@ const pages = [
     "map-pin",
     "images",
     "heart",
+    "handshake",
   ],
   I = (n) => `<i data-i="${n}"></i>`,
   draw = () =>
@@ -262,7 +265,7 @@ function findPosition() {
   );
 }
 function render() {
-  let n = Math.max(0, ids.indexOf(location.hash.slice(1)));
+  let n = Math.max(0, ids.indexOf(location.hash === "#community-title" ? "reseaux" : location.hash.slice(1)));
   if (modal.open) modal.close();
   document.title = pages[n] + " · New H’air";
   nav.innerHTML = pages
@@ -287,6 +290,7 @@ function render() {
       (fav.length
         ? `<div class="grid">${cards(fav.map((i) => products[i]))}</div>`
         : `<p class="guideintro">Touchez le cœur sur une fiche pour garder vos soins ici.</p>${A("Explorer la boutique", "boutique")}`),
+    () => document.getElementById("social-page").innerHTML,
   ][n]();
   if (n === 2) openQuiz();
   if (n === 3) locate(45.1885, 5.7245);
