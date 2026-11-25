@@ -265,7 +265,7 @@ function render() {
       '<div class="panel" id="quiz"></div>',
     () =>
       head("AUTOUR DE VOUS", "Coiffeurs spécialisés") +
-      `<div class="panel"><iframe title="Carte des environs" id="map"></iframe><button class="cta" onclick="findPosition()">Me localiser</button><p id="msg">Carte centrée sur Grenoble. Découvrez les <a href="https://www.google.com/maps/search/coiffeur+spécialisé+cheveux+bouclés+Grenoble" target="_blank" rel="noopener">salons pour cheveux bouclés à Grenoble ↗</a>.</p></div>`,
+      `<div class="panel"><iframe title="Carte des environs" id="map"></iframe><button class="cta" onclick="findPosition()">Me localiser</button><p id="msg">Carte centrée sur Grenoble. Découvrez les <a href="https://www.google.com/maps/search/coiffeur+spécialisé+cheveux+bouclés+Grenoble">salons pour cheveux bouclés à Grenoble →</a>.</p></div>`,
     styleGallery,
     () =>
       head("MON CARNET", "Mes favoris") +
@@ -333,7 +333,7 @@ function styleGallery() {
     styles
       .map(
         ([t, img, desc, brief, key]) =>
-          `<article class="card"><div class="photo"><img loading="lazy" ${photoSize(img)} src="assets/${img}.webp" alt="${t}"></div><div class="info"><span class="eyebrow">${img === "tresses" ? "COIFFURE TRESSÉE" : "FORME & TEXTURE"}</span><h3>${t}</h3><p>${desc}</p><details><summary>Les mots à dire au salon</summary><p>${brief}</p></details><a class="cta" target="_blank" rel="noopener" href="https://www.google.com/maps/search/${encodeURIComponent(key + " Grenoble")}">Trouver un spécialiste ↗</a></div></article>`,
+          `<article class="card"><div class="photo"><img loading="lazy" ${photoSize(img)} src="assets/${img}.webp" alt="${t}"></div><div class="info"><span class="eyebrow">${img === "tresses" ? "COIFFURE TRESSÉE" : "FORME & TEXTURE"}</span><h3>${t}</h3><p>${desc}</p><details><summary>Les mots à dire au salon</summary><p>${brief}</p></details><a class="cta" href="https://www.google.com/maps/search/${encodeURIComponent(key + " Grenoble")}">Trouver un spécialiste →</a></div></article>`,
       )
       .join("") +
     '</div><p class="guideintro">Pour aller plus loin : quelle frange selon la forme du visage ? <a href="https://www.franckprovost-expert.com/le-mag-expert/coiffure/quelle-frange-selon-la-forme-de-mon-visage_a1086">Lire le guide Franck Provost</a></p>'
