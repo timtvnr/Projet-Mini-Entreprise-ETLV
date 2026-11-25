@@ -397,10 +397,3 @@ if (window.visualViewport) {
   visualViewport.addEventListener("scroll", syncViewport);
   syncViewport();
 }
-
-// Local mock profiles only: no trackers, logins or external social accounts.
-function socialProfile(network){
- const insta=network==='instagram', title=insta?'Instagram':'Facebook';
- const posts=insta?[['pate','Définir une mèche avec une touche de pâte.'],['mousse','Un peu de mouvement dans les cheveux argentés.'],['demelant','Le démêlage, un geste à partager.']]:[['hero','Le projet est né à quatre : Pauline, Cameron, Louise et Timothée. Notre objectif ? Rendre les gestes de soin plus faciles à choisir.'],['solide','Le carnet de voyage : pensez à laisser sécher votre shampoing solide avant de le ranger.']];
- pop(`<span class="eyebrow">${title.toUpperCase()} · PROFIL FICTIF</span><h2>${insta?'@newhair.grenoble':'New H’air · Grenoble'}</h2><p>${insta?'Des textures, des portraits et des gestes de coiffage.':'Le journal de notre mini-entreprise et ses nouvelles de Grenoble.'}</p><div class="${insta?'social-gallery':'social-feed'}">${posts.map(([img,txt])=>`<figure><img loading="lazy" src="assets/${img}.webp" alt="${txt}"><figcaption>${txt}</figcaption></figure>`).join('')}</div><small>Publications de démonstration · Aucune connexion à ${title}.</small>`);
-}

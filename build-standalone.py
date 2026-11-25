@@ -9,6 +9,8 @@ assets['source-sans.woff2']=uri(Path('assets/source-sans.woff2'),'font/woff2')
 def inline(text):
     return re.sub(r'(?<!/)assets/([\w-]+\.(?:webp|woff2))',lambda m:assets[m[1]],text)
 source=re.sub(r'(style\.css|app\.js|studio\.js|motion\.js)\?v=[\w-]+', r'\1', Path('index.html').read_text())
+# The portable storefront links to the independently published social pages.
+source=source.replace('href="club/', 'href="https://timtvnr.github.io/Projet-Mini-Entreprise-ETLV/club/')
 html=inline(source).replace('<link rel="stylesheet" href="style.css">','<style>'+inline(Path('style.css').read_text())+'</style>')
 for name in ['icons','app','salons','studio','motion']:
     js=Path(name+'.js').read_text()
