@@ -177,7 +177,7 @@ function openQuiz(){
  if(!audience){quizView().innerHTML=`<div class="results">${head('POUR TOUS LES ÂGES','Pour qui préparez-vous cette routine ?')}<p>Pour vous ou pour un proche, sans distinction de genre. Pour un bébé ou un enfant, un adulte accompagne le parcours.</p><div class="choices">${audiences.map((x,i)=>`<button class="option" onclick="chooseAudience(${i})">${x}</button>`).join('')}</div></div>`;return}
  if(step<routeLength())return quiz();
  if(audience==='Bébé'||audience==='Enfant'){
- const baby=audience==='Bébé';quizView().innerHTML=`<div class="results">${head('LE CARNET FAMILLE',baby?'La première routine de bébé':'Une routine pour votre enfant')}<p>${baby?'Privilégiez des gestes simples, sans coiffants. Avant tout achat, vérifiez sur le produit réel l’âge indiqué et la notice.':'Un adulte accompagne le lavage et le démêlage. '+(answers[0]>=2?'Démêlez les boucles avec douceur, mèche par mèche.':'Commencez le démêlage par les pointes, sans tirer.')+' Vérifiez sur la notice que le soin convient à l’âge de l’enfant.'}</p><h2>${baby?'Notre référence de démonstration':'Laver et démêler'}</h2><div class="grid">${cards(baby?[products[7]]:[products[1],products[13]])}</div>${salonSuggestions()}<button onclick="restartConsultation()">Refaire le diagnostic</button></div>`;draw();return}
+ const baby=audience==='Bébé';quizView().innerHTML=`<div class="results">${head('LE CARNET FAMILLE',baby?'La première routine de bébé':'Une routine pour votre enfant')}<p>${baby?'Privilégiez des gestes simples, sans coiffants. Avant tout achat, vérifiez sur le produit réel l’âge indiqué et la notice.':'Un adulte accompagne le lavage et le démêlage. '+(answers[0]>=2?'Démêlez les boucles avec douceur, mèche par mèche.':'Commencez le démêlage par les pointes, sans tirer.')+' Vérifiez sur la notice que le soin convient à l’âge de l’enfant.'}</p><h2>${baby?'Le soin du bain':'Laver et démêler'}</h2><div class="grid">${cards(baby?[products[7]]:[products[1],products[13]])}</div>${salonSuggestions()}<button onclick="restartConsultation()">Refaire le diagnostic</button></div>`;draw();return}
  routine();
 }
 function quizView() {
@@ -331,7 +331,7 @@ function accountLabel() {
 function account(resumePayment = false) {
   if (!alias) {
     pop(
-      `${head("ESPACE DÉMO", "Mon compte")}<p>${resumePayment ? "Votre panier est conservé. Ouvrez un compte démo, puis confirmez le paiement. " : ""}Choisissez un pseudo fictif pour retrouver vos commandes simulées sur cet appareil. Aucun mot de passe nécessaire.</p><form id="profileForm"><label>Pseudo fictif <input id="pseudo" required maxlength="24" autocomplete="off"></label><button class="cta">Ouvrir mon espace</button></form>`,
+      `${head("ESPACE PERSONNEL", "Mon compte")}<p>${resumePayment ? "Votre panier est conservé. Ouvrez votre espace personnel, puis confirmez le paiement. " : ""}Choisissez un pseudo pour retrouver vos commandes simulées sur cet appareil. Aucun mot de passe nécessaire.</p><form id="profileForm"><label>Pseudo <input id="pseudo" required maxlength="24" autocomplete="off"></label><button class="cta">Ouvrir mon espace</button></form>`,
     );
     profileForm.onsubmit = (e) => {
       e.preventDefault();
@@ -346,7 +346,7 @@ function account(resumePayment = false) {
   }
   let orders = readOrders().filter((o) => o.owner === alias);
   pop(
-    `${head("PROFIL LOCAL · DÉMONSTRATION", "Mon carnet beauté")}<p id="welcome"></p><h3>Mes commandes simulées</h3>${orders.length ? orders.map((o) => `<div class="row"><span>${o.ref} · ${o.qty} article(s)</span><b>${price(o.amount)}</b></div>`).join("") : "<p>Aucune commande pour le moment.</p>"}<button onclick="alias='';store('nhAlias',null);accountLabel();modal.close()">Se déconnecter</button>`,
+    `${head("MON ESPACE LOCAL", "Mon carnet beauté")}<p id="welcome"></p><h3>Mes commandes simulées</h3>${orders.length ? orders.map((o) => `<div class="row"><span>${o.ref} · ${o.qty} article(s)</span><b>${price(o.amount)}</b></div>`).join("") : "<p>Aucune commande pour le moment.</p>"}<button onclick="alias='';store('nhAlias',null);accountLabel();modal.close()">Se déconnecter</button>`,
   );
   welcome.textContent = "Bienvenue, " + alias + " !";
 }

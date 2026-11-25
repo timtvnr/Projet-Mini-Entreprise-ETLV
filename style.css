@@ -1610,3 +1610,4 @@ aside{gap:12px;flex-flow:row wrap}.brand-name{font:24px Georgia;color:#fff7ef}.b
 .community-links .network-logo{width:35px;height:35px;display:block;margin-bottom:12px}
 
 #content>.community{border:1px solid #ddcdbf;border-radius:16px;padding:clamp(18px,4vw,48px)}
+.club-reading{grid-column:1/-1;border-top:1px solid #cebfae;padding-top:20px}.club-reading h3{font:26px Georgia;margin:6px 0 14px}.club-reading>div{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(225px,100%),1fr));gap:12px}.club-reading a{padding:14px;background:#fff9f1;border-radius:8px}.club-reading a span{display:block;margin-top:5px;color:#604b40}@media(prefers-reduced-motion:no-preference){.community-links a,.club-reading a{transition:transform .22s,box-shadow .22s}.community-links a:hover,.club-reading a:hover{transform:translateY(-3px);box-shadow:0 5px 18px #46302416}}

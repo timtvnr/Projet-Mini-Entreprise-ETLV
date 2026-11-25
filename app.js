@@ -118,7 +118,7 @@ const productNotes = [
     "Déposez une touche à la racine sur cheveux secs et répartissez du bout des doigts.",
   ],
   [
-    "Un shampoing présenté dans la gamme bébé de démonstration.",
+    "Un shampoing de la collection petite enfance, pour accompagner le geste de lavage pendant le bain.",
     "Un adulte applique et rince le produit en suivant les indications de la notice.",
   ],
   ["Une brume légère pour retravailler quelques mèches le matin, sans remouiller toute la chevelure.", "Vaporisez dans les mains, pressez les mèches à remettre en forme puis laissez sécher."],
@@ -231,7 +231,7 @@ function detail(n) {
   let p = products[n];
   const [format,texture,moment,tip]=careGuides[p[2]];
   pop(
-    `<span class="eyebrow">${p[1]}</span><h2>${p[0]}</h2><img class="detailphoto" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}"><dl class="care-specs"><div><dt>Format</dt><dd>${format}</dd></div><div><dt>Texture</dt><dd>${texture}</dd></div><div><dt>Dans la routine</dt><dd>${moment}</dd></div></dl><p>${productNotes[n][0]}</p><p><strong>Rayon :</strong> ${audienceLabel(p)} · Collection sans distinction de genre.</p><p><strong>Pour quel usage ?</strong> ${p[4]}.</p><p><strong>Le geste :</strong> ${productNotes[n][1]}</p><div class="care-tip"><strong>Le conseil pratique</strong><p>${tip}</p></div><small class="demo-note">Produit de démonstration · Format illustratif</small><b>${price(p[3])}</b><br><button class="cta" onclick="cart.push(${n});save();bag()">Ajouter au panier</button>${salonSuggestions(n)}`,
+    `<span class="eyebrow">${p[1]}</span><h2>${p[0]}</h2><img class="detailphoto" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}"><dl class="care-specs"><div><dt>Format</dt><dd>${format}</dd></div><div><dt>Texture</dt><dd>${texture}</dd></div><div><dt>Dans la routine</dt><dd>${moment}</dd></div></dl><p>${productNotes[n][0]}</p><p><strong>Rayon :</strong> ${audienceLabel(p)} · Collection sans distinction de genre.</p><p><strong>Pour quel usage ?</strong> ${p[4]}.</p><p><strong>Le geste :</strong> ${productNotes[n][1]}</p><div class="care-tip"><strong>Le conseil pratique</strong><p>${tip}</p></div><small class="demo-note">Collection New H’air · For your Hair</small><b>${price(p[3])}</b><br><button class="cta" onclick="cart.push(${n});save();bag()">Ajouter au panier</button>${salonSuggestions(n)}`,
   );
 }
 function save() {
