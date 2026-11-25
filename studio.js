@@ -168,8 +168,17 @@ function restoreQuiz() {
   ];
 }
 let [answers, step] = restoreQuiz();
-function openQuiz() {
-  step === countQuestions ? routine() : quiz();
+const audiences=['Bébé','Enfant','Adolescent','Adulte','Senior','Je préfère ne pas préciser'];
+let audience=audiences.includes(load('nhAudience'))?load('nhAudience'):'';
+function routeLength(){return audience==='Bébé'?0:audience==='Enfant'?4:countQuestions}
+function restartConsultation(){audience='';store('nhAudience',null);step=0;answers=[];persistQuiz();openQuiz()}
+function chooseAudience(i){audience=audiences[i];store('nhAudience',audience);step=Math.min(step,routeLength());openQuiz()}
+function openQuiz(){
+ if(!audience){quizView().innerHTML=`<div class="results">${head('POUR TOUS LES ÂGES','Pour qui préparez-vous cette routine ?')}<p>Pour vous ou pour un proche, sans distinction de genre. Pour un bébé ou un enfant, un adulte accompagne le parcours.</p><div class="choices">${audiences.map((x,i)=>`<button class="option" onclick="chooseAudience(${i})">${x}</button>`).join('')}</div></div>`;return}
+ if(step<routeLength())return quiz();
+ if(audience==='Bébé'||audience==='Enfant'){
+ const baby=audience==='Bébé';quizView().innerHTML=`<div class="results">${head('LE CARNET FAMILLE',baby?'La première routine de bébé':'Une routine pour votre enfant')}<p>${baby?'Privilégiez des gestes simples, sans coiffants. Avant tout achat, vérifiez sur le produit réel l’âge indiqué et la notice.':'Un adulte accompagne le lavage et le démêlage. '+(answers[0]>=2?'Démêlez les boucles avec douceur, mèche par mèche.':'Commencez le démêlage par les pointes, sans tirer.')+' Vérifiez sur la notice que le soin convient à l’âge de l’enfant.'}</p><h2>${baby?'Notre référence de démonstration':'Le geste de lavage'}</h2><div class="grid">${cards([products[baby?7:1]])}</div>${salonSuggestions()}<button onclick="restartConsultation()">Refaire le diagnostic</button></div>`;draw();return}
+ routine();
 }
 function quizView() {
   return document.getElementById("quiz");
@@ -186,7 +195,7 @@ function quiz() {
     "Décrire ses gestes",
     "Dessiner son style",
   ];
-  quizView().innerHTML = `<div class="quizside"><span class="tag">NEW H’AIR · CONSULTATION</span><div><span class="tag">LE CARNET PERSONNEL</span><h3>Le portrait<br><em>de vos cheveux.</em></h3><p>De la racine aux pointes, un parcours pour composer votre routine et préparer votre prochain rendez-vous.</p></div><ul>${chapters.map((c, i) => `<li class="${chapter === i ? "current" : ""}">${i < chapter ? "✓" : "•"} ${c}</li>`).join("")}</ul></div><form class="quizbody" id="questionForm"><div class="quizmeta"><span class="eyebrow">${theme.toUpperCase()}</span><strong>Question ${step + 1} sur ${countQuestions}</strong></div><progress aria-label="Question en cours" value="${step + 1}" max="${countQuestions}"></progress><fieldset><legend tabindex="-1">${title}</legend><p>${hint}</p><div class="choices">${opts.map((x, i) => `<label class="option"><input type="radio" name="response" value="${i}" ${answers[step] === i ? "checked" : ""} required><span>${x}</span></label>`).join("")}</div></fieldset><div class="quizcontrols"><button type="button" class="back" ${step ? "" : "disabled"} onclick="moveQuiz(-1)">← Retour</button><button class="cta" type="submit">${step === countQuestions - 1 ? "Voir mon carnet" : "Continuer"} →</button></div><small>Votre progression est enregistrée sur cet appareil.</small></form>`;
+  quizView().innerHTML = `<div class="quizside"><span class="tag">NEW H’AIR · CONSULTATION</span><div><span class="tag">LE CARNET PERSONNEL</span><h3>Le portrait<br><em>de vos cheveux.</em></h3><p>De la racine aux pointes, un parcours pour composer votre routine et préparer votre prochain rendez-vous.</p></div><ul>${chapters.map((c, i) => `<li class="${chapter === i ? "current" : ""}">${i < chapter ? "✓" : "•"} ${c}</li>`).join("")}</ul></div><form class="quizbody" id="questionForm"><div class="quizmeta"><span class="eyebrow">${theme.toUpperCase()}</span><strong>Question ${step + 1} sur ${routeLength()}</strong></div><progress aria-label="Question en cours" value="${step + 1}" max="${routeLength()}"></progress><fieldset><legend tabindex="-1">${title}</legend><p>${hint}</p><div class="choices">${opts.map((x, i) => `<label class="option"><input type="radio" name="response" value="${i}" ${answers[step] === i ? "checked" : ""} required><span>${x}</span></label>`).join("")}</div></fieldset><div class="quizcontrols"><button type="button" class="back" ${step ? "" : "disabled"} onclick="moveQuiz(-1)">← Retour</button><button class="cta" type="submit">${step === routeLength() - 1 ? "Voir mon carnet" : "Continuer"} →</button></div><small>Votre progression est enregistrée sur cet appareil.</small><button type="button" class="back" onclick="restartConsultation()">Changer de destinataire</button></form>`;
   const form = document.getElementById("questionForm");
   form.onchange = () => {
     answers[step] = Number(form.elements.response.value);
@@ -297,7 +306,7 @@ function routine() {
         ][tech],
     ],
   ];
-  quizView().innerHTML = `<div class="results">${head("VOTRE ORDONNANCE BEAUTÉ · 4 GESTES", "Votre routine sur mesure")}<p>${questions[0][3][texture]} · ${questions[7][3][goal]} · ${questions[8][3][time]}</p><div class="steps">${steps.map(([k, t, p]) => `<article><span class="eyebrow">${k}</span><h3>${t}</h3><p>${p}</p></article>`).join("")}</div>${styleNotes()}<h2>Votre sélection de soins</h2><ul class="kit-uses">${kit.map(i=>`<li><strong>${products[i][0]}</strong> · ${products[i][4]}</li>`).join("")}</ul><div class="grid">${cards(kit.map((n) => products[n]))}</div><button class="cta" onclick="cart.push(${kit.join(",")});save();bag()">Ajouter ma sélection au panier</button> <button onclick="step=0;answers=[];persistQuiz();quiz()">Refaire le diagnostic</button></div>`;
+  quizView().innerHTML = `<div class="results">${head("VOTRE ORDONNANCE BEAUTÉ · 4 GESTES", "Votre routine sur mesure")}<p>${questions[0][3][texture]} · ${questions[7][3][goal]} · ${questions[8][3][time]}</p><div class="steps">${steps.map(([k, t, p]) => `<article><span class="eyebrow">${k}</span><h3>${t}</h3><p>${p}</p></article>`).join("")}</div>${styleNotes()}<h2>Votre sélection de soins</h2><ul class="kit-uses">${kit.map(i=>`<li><strong>${products[i][0]}</strong> · ${products[i][4]}</li>`).join("")}</ul><div class="grid">${cards(kit.map((n) => products[n]))}</div><button class="cta" onclick="cart.push(${kit.join(",")});save();bag()">Ajouter ma sélection au panier</button>${salonSuggestions()} <button onclick="restartConsultation()">Refaire le diagnostic</button></div>`;
   draw();
 }
 function readOrders() {
