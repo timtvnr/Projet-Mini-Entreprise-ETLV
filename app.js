@@ -151,12 +151,14 @@ function photoSize(key) {
     ? 'width="667" height="1000"'
     : `width="1100" height="${["hero", "pixie", "cire", "bebe"].includes(key) ? 733 : 825}"`;
 }
+const merchandising = {masque:'Populaire', shampoing:'Essentiel', huile:'Coup de cœur', gel:'Spécial boucles', bebe:'Tout-petits', solide:'Format nomade', pate:'Nouveauté', mousse:'Nouveauté', demelant:'Sélection junior'};
+function productBadge(p){const label=merchandising[p[2]];return label?`<span class="badge" data-kind="${label==='Populaire'?'popular':label==='Nouveauté'?'new':'edit'}">${label}</span>`:''}
 function cards(arr) {
   return (
     arr
       .map((p) => {
         let n = products.indexOf(p);
-        return `<article class="card"><div class="photo"><img loading="lazy" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}" onclick="detail(${n})">${n >= 11 ? '<span class="badge">Nouveauté</span>' : ""}<button aria-label="Favori : ${p[0]}" aria-pressed="${fav.includes(n)}" class="fav ${fav.includes(n) ? "on" : ""}" onclick="favorite(${n},this)">${I("heart")}</button></div><div class="info"><span class="eyebrow">${p[1].toUpperCase()}</span><h3><a href="#" onclick="detail(${n});return false">${p[0]}</a></h3><small class="audience-tag">${audienceLabel(p)}</small><p class="product-purpose">${p[4]}</p><div class="product-meta"><span>${careGuides[p[2]][0]}</span><strong>${price(p[3])}</strong></div><button class="add-care" onclick="cart.push(${n});save();bag()">Ajouter au panier</button></div></article>`;
+        return `<article class="card"><div class="photo"><img loading="lazy" ${photoSize(p[2])} src="assets/${p[2]}.webp" alt="${p[0]}" onclick="detail(${n})">${productBadge(p)}<button aria-label="Favori : ${p[0]}" aria-pressed="${fav.includes(n)}" class="fav ${fav.includes(n) ? "on" : ""}" onclick="favorite(${n},this)">${I("heart")}</button></div><div class="info"><span class="eyebrow">${p[1].toUpperCase()}</span><h3><a href="#" onclick="detail(${n});return false">${p[0]}</a></h3><small class="audience-tag">${audienceLabel(p)}</small><p class="product-purpose">${p[4]}</p><div class="product-meta"><span>${careGuides[p[2]][0]}</span><strong>${price(p[3])}</strong></div><button class="add-care" onclick="cart.push(${n});save();bag()">Ajouter au panier</button></div></article>`;
       })
       .join("") || "<p>Aucun soin ne correspond à ces filtres.</p>"
   );
@@ -394,4 +396,11 @@ if (window.visualViewport) {
   visualViewport.addEventListener("resize", syncViewport);
   visualViewport.addEventListener("scroll", syncViewport);
   syncViewport();
+}
+
+// Local mock profiles only: no trackers, logins or external social accounts.
+function socialProfile(network){
+ const insta=network==='instagram', title=insta?'Instagram':'Facebook';
+ const posts=insta?[['pate','Définir une mèche avec une touche de pâte.'],['mousse','Un peu de mouvement dans les cheveux argentés.'],['demelant','Le démêlage, un geste à partager.']]:[['hero','Le projet est né à quatre : Pauline, Cameron, Louise et Timothée. Notre objectif ? Rendre les gestes de soin plus faciles à choisir.'],['solide','Le carnet de voyage : pensez à laisser sécher votre shampoing solide avant de le ranger.']];
+ pop(`<span class="eyebrow">${title.toUpperCase()} · PROFIL FICTIF</span><h2>${insta?'@newhair.grenoble':'New H’air · Grenoble'}</h2><p>${insta?'Des textures, des portraits et des gestes de coiffage.':'Le journal de notre mini-entreprise et ses nouvelles de Grenoble.'}</p><div class="${insta?'social-gallery':'social-feed'}">${posts.map(([img,txt])=>`<figure><img loading="lazy" src="assets/${img}.webp" alt="${txt}"><figcaption>${txt}</figcaption></figure>`).join('')}</div><small>Publications de démonstration · Aucune connexion à ${title}.</small>`);
 }
